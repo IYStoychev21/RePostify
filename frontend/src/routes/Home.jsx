@@ -1,10 +1,15 @@
 import Nav from '../components/Nav'
+import NewPost from '../components/NewPost'
 
 export default function Home() {
     return (
         <>
             <Nav />
-            <h1>Home Page</h1> 
+            <div className='mt-16'>
+                <div className='flex justify-center'>
+                    <NewPost />
+                </div>
+            </div>
         </>
     )
 }
