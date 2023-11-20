@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  backend:
+    build: backend
+    command: sh -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/backend
+
+  postgres:
+    image: postgres
+    volumes:
+      - data:/var/lib/postgresql/data/
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  frontend: 
+    build: ./frontend
+    command: sh -c "npm run dev"
+    env_file:
+      - .env
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  data:

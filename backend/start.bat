@@ -1,1 +1,0 @@
-start "Server" cmd /c ".venv\Scripts\activate.bat & uvicorn main:app --reload & pause"

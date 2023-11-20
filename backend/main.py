@@ -8,7 +8,7 @@ import json
 
 
 load_dotenv()
-conn = psycopg2.connect(host="localhost", port="5432", dbname="postgres", password=os.getenv("password"), user="postgres")
+conn = psycopg2.connect(host="postgres", port="5432", dbname="postgres", password=os.getenv("PASSWORD"), user="postgres")
 cur = conn.cursor()
 
 # create table if it doesn't exist
@@ -52,3 +52,7 @@ def get_post(post_id: int):
 @app.get("/posts")
 def get_posts():
     return posts
+
+@app.get("/")
+def root():
+    return {"message": "Hello World"}
