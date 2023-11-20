@@ -1,58 +1,59 @@
 from typing import List, Union
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from fastapi.security import OAuth2PasswordBearer
 from Post import Post
-from dotenv import load_dotenv
-import os
-import psycopg2
+from jose import jwt
+import requests
 import json
-
-
-load_dotenv()
-conn = psycopg2.connect(host="postgres", port="5432", dbname="postgres", password=os.getenv("PASSWORD"), user="postgres")
-cur = conn.cursor()
-
-# create table if it doesn't exist
-cur.execute("""
-            CREATE TABLE IF NOT EXISTS post (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(255)
-            )
-""")
-
-# insert testing values into table
-cur.execute("""
-            INSERT INTO post (id, name) VALUES
-            (DEFAULT, 'post 0'),
-            (DEFAULT, 'post 1'),
-            (DEFAULT, 'post 2')
-""")
-
-conn.commit()
-
+import db as db
+import os
+from dotenv import load_dotenv
 
 app = FastAPI()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# create a list of posts
-posts: List[Post] = []
-
-# append 10 new posts to the list
-for i in range(10):
-     post: Post = Post(f"post {i}", i)
-     posts.append(post)
-
-# write an api get at url /posts/{post_id} and make it return a post object's name
 @app.get("/posts/{post_id}")
 def get_post(post_id: int):
-    cur.execute(f"""
+    db.cur.execute(f"""
                         SELECT * FROM post WHERE id = {post_id}           
     """)
-    return cur.fetchone()[1]
+    return db.cur.fetchone()[1]
 
-# write an api get at url /posts
+
 @app.get("/posts")
 def get_posts():
-    return posts
+    db.cur.execute(f"""
+                        SELECT * FROM post 
+    """)
+    return db.cur.fetchall()
 
-@app.get("/")
-def root():
-    return {"message": "Hello World"}
+
+@app.get("/login/google")
+async def login_google():
+    load_dotenv()
+    print(os.getenv("GOOGLE_CLIENT_ID"))
+    return {
+        "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={os.getenv("GOOGLE_CLIENT_ID")}&redirect_uri={os.getenv("GOOGLE_REDIRECT_URI")}&scope=openid%20profile%20email&access_type=offline"
+    }
+
+
+@app.get("/auth/google")
+async def auth_google(code: str):
+    token_url = "https://accounts.google.com/o/oauth2/token"
+    data = {
+        "code": code,
+        "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+        "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+        "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI"),
+        "grant_type": "authorization_code",
+    }
+    response = requests.post(token_url, data=data)
+    access_token = response.json().get("access_token")
+    user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
+    print(user_info.json())
+    return user_info.json()
+
+
+@app.get("/token")
+async def get_token(token: str = Depends(oauth2_scheme)):
+    return jwt.decode(token, db.GOOGLE_CLIENT_SECRET, algorithms=["HS256"])
