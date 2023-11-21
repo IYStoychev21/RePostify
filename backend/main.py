@@ -1,5 +1,5 @@
 from typing import List, Union
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from Post import Post
 from jose import jwt
@@ -8,8 +8,12 @@ import json
 import db as db
 import os
 from dotenv import load_dotenv
+from starlette.middleware.sessions import SessionMiddleware
 
 app = FastAPI()
+app.add_middleware(
+    SessionMiddleware, secret_key=os.getenv("SECRET_KEY")
+)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @app.get("/posts/{post_id}")
@@ -38,7 +42,7 @@ async def login_google():
 
 
 @app.get("/auth/google")
-async def auth_google(code: str):
+async def auth_google(code: str, request: Request):
     token_url = "https://accounts.google.com/o/oauth2/token"
     data = {
         "code": code,
@@ -49,11 +53,20 @@ async def auth_google(code: str):
     }
     response = requests.post(token_url, data=data)
     access_token = response.json().get("access_token")
+    # print(f"\n\nresponse = {response.json().get("access_token")}\n\n")
     user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
-    print(user_info.json())
+    request.session["access_token"] = access_token
     return user_info.json()
 
 
+def get_current_token(request: Request):
+    token = request.session.get("access_token")
+    if token is None:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return token
+
+
 @app.get("/token")
-async def get_token(token: str = Depends(oauth2_scheme)):
-    return jwt.decode(token, db.GOOGLE_CLIENT_SECRET, algorithms=["HS256"])
+async def get_token(token: str = Depends(get_current_token)):
+    print(f"\n\nToken = {token}\n\n")
+    return token
