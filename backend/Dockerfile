@@ -1,6 +1,6 @@
 FROM python
 
-WORKDIR /backend
+WORKDIR /backend/
 
 COPY requirements.txt requirements.txt
 

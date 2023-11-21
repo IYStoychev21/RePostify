@@ -1,6 +1,7 @@
 from typing import List, Union
 from fastapi import FastAPI, Depends, Request, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.responses import HTMLResponse
 from Post import Post
 from jose import jwt
 import requests
@@ -9,6 +10,7 @@ import db as db
 import os
 from dotenv import load_dotenv
 from starlette.middleware.sessions import SessionMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 app.add_middleware(
@@ -16,6 +18,17 @@ app.add_middleware(
 )
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+origins = [
+    "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/posts/{post_id}")
 def get_post(post_id: int):
@@ -36,14 +49,14 @@ def get_posts():
 @app.get("/login/google")
 async def login_google():
     load_dotenv()
-    print(os.getenv("GOOGLE_CLIENT_ID"))
+
     return {
         "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={os.getenv("GOOGLE_CLIENT_ID")}&redirect_uri={os.getenv("GOOGLE_REDIRECT_URI")}&scope=openid%20profile%20email&access_type=offline"
     }
 
 
-@app.get("/auth/google")
-async def auth_google(code: str, request: Request):
+@app.get("/auth/google", response_class=HTMLResponse)
+async def auth_google(code: str, request: Request) -> HTMLResponse:
     token_url = "https://accounts.google.com/o/oauth2/token"
     data = {
         "code": code,
@@ -54,10 +67,20 @@ async def auth_google(code: str, request: Request):
     }
     response = requests.post(token_url, data=data)
     access_token = response.json().get("access_token")
-    user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
     request.session["access_token"] = access_token
-    return user_info.json()
 
+    html_content = """
+        <!DOCTYPE html>
+        <html>
+            <body>
+                <script>
+                    window.location.href = "http://localhost:5173/home";
+                </script>
+            </body>
+        </html>        
+    """
+
+    return HTMLResponse(content=html_content, status_code=200)
 
 def get_current_token(request: Request):
     token = request.session.get("access_token")
