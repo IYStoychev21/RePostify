@@ -4,13 +4,13 @@ import NavUser from "./NavUser"
 import { useEffect, useState } from "react";
 
 export default function Nav() {
-    let [userData, setUserData] = useState({})
+    let [userData, setUserData] = useState(null)
 
     useEffect(() => {
-        const data = JSON.parse(localStorage.getItem("userData"))
-        if(data){
-            setUserData(data)
-        }
+        axios.get('http://localhost:8000/user', { withCredentials: true })
+        .then((res) => {
+            setUserData(res.data)
+        })
     }, [])
 
     return (
@@ -24,7 +24,7 @@ export default function Nav() {
                 </div>
 
                 <div className="absolute right-[20px] py-2">
-                    <NavUser name={userData.name} image={userData.picture} role="USER" />
+                    {userData && <NavUser name={userData.name} image={userData.picture} role="USER" />}
                 </div>
             </div>
         </>
