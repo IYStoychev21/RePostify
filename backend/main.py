@@ -16,6 +16,7 @@ app.add_middleware(
 )
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 @app.get("/posts/{post_id}")
 def get_post(post_id: int):
     db.cur.execute(f"""
@@ -53,7 +54,6 @@ async def auth_google(code: str, request: Request):
     }
     response = requests.post(token_url, data=data)
     access_token = response.json().get("access_token")
-    # print(f"\n\nresponse = {response.json().get("access_token")}\n\n")
     user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {access_token}"})
     request.session["access_token"] = access_token
     return user_info.json()
@@ -68,5 +68,15 @@ def get_current_token(request: Request):
 
 @app.get("/token")
 async def get_token(token: str = Depends(get_current_token)):
-    print(f"\n\nToken = {token}\n\n")
-    return token
+    return {"access_token": token}
+
+
+@app.get("/user")
+async def get_user(token: str = Depends(get_current_token)):
+    user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {token}"})
+    return user_info.json()
+
+@app.get("/signout")
+async def sign_out(request: Request):
+    request.session.pop("access_token", None)
+    return {"detail": "Successfully signed out"}
