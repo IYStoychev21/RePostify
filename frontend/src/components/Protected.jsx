@@ -7,13 +7,12 @@ export default function Protected({children}) {
     let [isLoggedIn, setIsLoggedIn] = useState(true);
     
     useEffect(() => {
-        axios.get('http://localhost:3000/token', {withCredentials: true}).then((response) => {
-            if (response.data.length === 0) {
-                setIsLoggedIn(false)
-            }
+        axios.get('http://localhost:8000/token', {withCredentials: true}).then((response) => {
+            setIsLoggedIn(true)
+        }).catch((err) => {
+            setIsLoggedIn(false)
         })
     }, [])
-
     
     if(!isLoggedIn)
         return <Navigate to="/"/>

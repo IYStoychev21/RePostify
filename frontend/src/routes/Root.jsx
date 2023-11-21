@@ -8,13 +8,6 @@ export default function Root() {
            window.location.href = res.data.url
         })
     }
-
-    // useEffect(() => {
-    //     axios.get('http://localhost:8000/token', {withCredentials: true})
-    //     .then((res) => {
-    //         console.log(res)
-    //     })
-    // }, [])
     
     return (
         <>
