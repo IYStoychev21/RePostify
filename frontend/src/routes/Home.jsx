@@ -1,11 +1,20 @@
 import Nav from '../components/Nav'
 import NewPost from '../components/NewPost'
 import Post from '../components/Post'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 
 export default function Home() {
     let [posts, setPosts] = useState([])
+
+    localStorage.clear()
+    useEffect(() => {
+        axios.get('http://localhost:8000/user', { withCredentials: true })
+            .then((res) => {
+                localStorage.setItem("userData", JSON.stringify(res.data))
+            })
+    }, [])
 
     return (
         <>
