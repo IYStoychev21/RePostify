@@ -1,12 +1,12 @@
 import Nav from '../components/Nav'
 import NewPost from '../components/NewPost'
 import Post from '../components/Post'
-import { useState } from 'react'
-
+import { useEffect,  useState } from 'react'
+import axios from 'axios'
 
 export default function Home() {
     let [posts, setPosts] = useState([])
-
+    
     return (
         <>
             <Nav />
