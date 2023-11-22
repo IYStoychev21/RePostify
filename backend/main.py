@@ -35,7 +35,7 @@ def get_post(post_id: int):
     db.cur.execute(f"""
                         SELECT * FROM post WHERE id = {post_id}           
     """)
-    return db.cur.fetchone()[1]
+    return db.cur.fetchone()["body"]
 
 
 @app.get("/posts")
@@ -44,6 +44,14 @@ def get_posts():
                         SELECT * FROM post 
     """)
     return db.cur.fetchall()
+
+
+@app.get("/user/organisations/{user_id}")
+def get_user_organisations(user_id: int):
+    db.cur.execute(f"""SELECT * FROM uo_bridge WHERE uid = {user_id}""")
+    rows = db.cur.fetchall()
+    print(rows)
+    return rows or None    
 
 
 @app.get("/login/google")

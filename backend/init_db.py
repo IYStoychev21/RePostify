@@ -34,13 +34,18 @@ cur.execute("""
     VALUES
         (DEFAULT, 'Org1'),
         (DEFAULT, 'Org2'),
-        (DEFAULT, 'Org3');
-        
-    INSERT INTO uo_bridge VALUES
-        (DEFAULT, 1, 1),
-        (DEFAULT, 2, 2),
-        (DEFAULT, 2, 3);                    
+        (DEFAULT, 'Org3');                    
 """)
 
-conn.commit();
-conn.close();
+conn.commit()
+
+cur.execute("""
+    INSERT INTO uo_bridge (id, uid, oid)
+    VALUES
+        (DEFAULT, 1, 1),
+        (DEFAULT, 1, 2),
+        (DEFAULT, 2, 2),
+        (DEFAULT, 2, 3);
+""")
+conn.commit()
+conn.close()

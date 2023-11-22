@@ -9,7 +9,7 @@ cur = conn.cursor()
 cur.execute("""
     DELETE FROM uo_bridge;
     DELETE FROM users;
-    DELETE FROM organisations;              
+    DELETE FROM organisations;
 """)
 
 conn.commit();
