@@ -82,7 +82,7 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
         <html>
             <body>
                 <script>
-                    window.location.href = "http://localhost:5173/home";
+                    window.location.href = "http://localhost:5173/organizations";
                 </script>
             </body>
         </html>        
