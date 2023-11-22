@@ -2,7 +2,6 @@ from typing import List, Union
 from fastapi import FastAPI, Depends, Request, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import HTMLResponse
-from Post import Post
 from jose import jwt
 import requests
 import json
@@ -35,7 +34,7 @@ def get_post(post_id: int):
     db.cur.execute(f"""
                         SELECT * FROM post WHERE id = {post_id}           
     """)
-    return db.cur.fetchone()["body"]
+    return db.cur.fetchone()["name"]
 
 
 @app.get("/posts")
@@ -50,8 +49,32 @@ def get_posts():
 def get_user_organisations(user_id: int):
     db.cur.execute(f"""SELECT * FROM uo_bridge WHERE uid = {user_id}""")
     rows = db.cur.fetchall()
-    print(rows)
     return rows or None    
+
+
+def get_current_token(request: Request):
+    token = request.session.get("access_token")
+    if token is None:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return token
+
+
+@app.get("/token")
+async def get_token(token: str = Depends(get_current_token)):
+    return {"access_token": token}
+
+
+@app.get("/user")
+async def get_user(request: Request, token: str = Depends(get_current_token)):
+    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get("access_token")}"}).json()["email"]}')""")
+    user_info = db.cur.fetchone()
+    return user_info
+
+
+@app.get("/signout")
+async def sign_out(request: Request):
+    request.session.pop("access_token", None)
+    return {"detail": "Successfully signed out"}
 
 
 @app.get("/login/google")
@@ -77,6 +100,19 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
     access_token = response.json().get("access_token")
     request.session["access_token"] = access_token
 
+
+    response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get("access_token")}"}).json()
+    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{response["email"]}')""")
+    email = db.cur.fetchone()
+    
+    if email is None:
+        db.cur.execute(f"""INSERT INTO users (id, name, email, pfp)
+                        VALUES
+                            (DEFAULT, '{response["name"]}', '{response["email"]}', '{response["picture"]}');
+        """)
+        db.conn.commit()
+        
+    
     html_content = """
         <!DOCTYPE html>
         <html>
@@ -89,25 +125,3 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
     """
 
     return HTMLResponse(content=html_content, status_code=200)
-
-def get_current_token(request: Request):
-    token = request.session.get("access_token")
-    if token is None:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    return token
-
-
-@app.get("/token")
-async def get_token(token: str = Depends(get_current_token)):
-    return {"access_token": token}
-
-
-@app.get("/user")
-async def get_user(token: str = Depends(get_current_token)):
-    user_info = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {token}"})
-    return user_info.json()
-
-@app.get("/signout")
-async def sign_out(request: Request):
-    request.session.pop("access_token", None)
-    return {"detail": "Successfully signed out"}
