@@ -2,14 +2,13 @@ import Nav from '../components/Nav'
 import NewPost from '../components/NewPost'
 import Post from '../components/Post'
 import { useState } from 'react'
-import axios from 'axios'
 import { useSearchParams } from 'react-router-dom'
 
 export default function Home() {
     let [posts, setPosts] = useState([])
     let [queryParam] = useSearchParams()
     
-    let organizationId = 0
+    let organizationId = 1
     organizationId = queryParam.get("id")
 
     return (

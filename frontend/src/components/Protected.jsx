@@ -7,7 +7,7 @@ export default function Protected({children}) {
     let [isLoggedIn, setIsLoggedIn] = useState(true);
     
     useEffect(() => {
-        axios.get('http://localhost:8000/user', {withCredentials: true}).then((response) => {
+        axios.get('http://localhost:8000/user', {withCredentials: true}).then(() => {
             setIsLoggedIn(true)
         }).catch((err) => {
             setIsLoggedIn(false)

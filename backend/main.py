@@ -71,8 +71,14 @@ async def get_token(token: str = Depends(get_current_token)):
 
 @app.get("/user")
 async def get_user(request: Request, token: str = Depends(get_current_token)):
-    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get("access_token")}"}).json()["email"]}')""")
+    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get('access_token')}"}).json()["email"]}')""")
     user_info = db.cur.fetchone()
+
+    if user_info is None:
+        return {"detail": "User not found"}
+
+    user_info["pfp"] = user_info["pfp"][0:-4] + "320-c"
+
     return user_info
 
 
@@ -107,6 +113,7 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
 
 
     response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get("access_token")}"}).json()
+    print(f"\n\nresponse = {response}\n\n")
     db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{response["email"]}')""")
     email = db.cur.fetchone()
     

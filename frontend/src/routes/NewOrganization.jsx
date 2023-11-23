@@ -1,6 +1,7 @@
 import axios from "axios"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import NewMember from "../components/NewMember"
+import useFetch from "../hooks/useFetch"
 
 class Member {
     constructor() {
@@ -19,15 +20,8 @@ class Member {
 
 export default function NewOrganization() {
     let [name, setName] = useState(null)
-    let [userData, setUserData] = useState(null)
     let [membersEntries, setMembersEntries] = useState([])
-    
-    useEffect(() => { 
-        axios.get('http://localhost:8000/user', { withCredentials: true })
-        .then((res) => { 
-            setUserData(res.data)
-        })
-    }, [])
+    let userData = useFetch('http://localhost:8000/user')
     
     const getNameOnChange = (event) => {
         setName(event.target.value)
@@ -39,7 +33,7 @@ export default function NewOrganization() {
         let data = {
             name: name,
             members: membersEntries,
-            owner: userData.email
+            owner: userData.data.email
         }
 
         console.log(data)
