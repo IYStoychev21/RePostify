@@ -57,6 +57,11 @@ def get_user_organisations(user_id: int):
     return rows or None    
 
 
+@app.get("/organisation/{organisation_id}")
+def get_organisation(organisation_id: int):
+    db.cur.execute(f"""SELECT * FROM organisations WHERE id = {organisation_id}""")
+    return db.cur.fetchone()
+
 @app.post("organisation/create")
 async def create_organisation(request: Request, name: str):
     #############################################
