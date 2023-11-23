@@ -63,7 +63,7 @@ def get_organisation(organisation_id: int):
     return db.cur.fetchone()
 
 @app.post("organisation/create")
-async def create_organisation(request: Request, name: str):
+async def create_organisation(request: Request):
     #############################################
     # {                                         #
     #     name: "random-org",                   #
