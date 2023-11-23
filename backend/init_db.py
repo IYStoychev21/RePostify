@@ -1,12 +1,6 @@
-import psycopg2
-from dotenv import load_dotenv
-import os
+import db.py
 
-load_dotenv()
-conn = psycopg2.connect(host="postgres", port="5432", dbname="postgres", password=os.getenv("PASSWORD"), user="postgres")
-cur = conn.cursor()
-
-cur.execute("""
+db.cur.execute("""
     CREATE TABLE IF NOT EXISTS organisations (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255)
@@ -46,7 +40,7 @@ cur.execute("""
     );
     
     CREATE TABLE IF NOT EXISTS uo_bridge (
-        id SERIAL PRIMARY KEY,
+        id SERIAL PRIMARY KEY,  
         uid INT NOT NULL,
         oid INT NOT NULL,
         FOREIGN KEY (uid) REFERENCES users(id),
@@ -62,5 +56,5 @@ cur.execute("""
         (DEFAULT, 2, 3, 'Member');
 """)
 
-conn.commit()
+db.conn.commit()
 conn.close()

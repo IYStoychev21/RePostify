@@ -6,6 +6,8 @@ from jose import jwt
 import requests
 import json
 import db as db
+import init_db as init_db
+import drop as drop
 import os
 from dotenv import load_dotenv
 from starlette.middleware.sessions import SessionMiddleware
@@ -29,10 +31,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+drop.drop_db()
+init_db.init_db()
+
 @app.get("/posts/{post_id}")
 def get_post(post_id: int):
     db.cur.execute(f"""
-                        SELECT * FROM post WHERE id = {post_id}           
+                        SELECT * FROM posts WHERE id = {post_id}           
     """)
     return db.cur.fetchone()["name"]
 
@@ -40,7 +45,7 @@ def get_post(post_id: int):
 @app.get("/posts")
 def get_posts():
     db.cur.execute(f"""
-                        SELECT * FROM post 
+                        SELECT * FROM posts 
     """)
     return db.cur.fetchall()
 
