@@ -80,7 +80,7 @@ async def create_organisation(request: Request):
     
     db.cur.execute(f"""INSERT INTO organisations (id, name)
                         VALUES           
-                            (DEFAULT, '{data["name"]}')') 
+                            (DEFAULT, '{data["name"]}')) 
     """)
     
     for member in data["members"]:
