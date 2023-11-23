@@ -57,6 +57,43 @@ def get_user_organisations(user_id: int):
     return rows or None    
 
 
+@app.post("organisation/create")
+async def create_organisation(request: Request, name: str):
+    #############################################
+    # {                                         #
+    #     name: "random-org",                   #
+    #     owner: "ivan.stoychev10@gmail.com",   #
+    #     members: [                            #
+    #         {                                 #
+    #         email: randomMail@gmail.com,      #
+    #         role: "user"                      #
+    #         }                                 #
+    #     ]                                     #
+    # }                                         #
+    #############################################
+    data = await request.json()
+    
+    db.cur.execute(f"""INSERT INTO organisations (id, name)
+                        VALUES           
+                            (DEFAULT, '{data["name"]}')') 
+    """)
+    
+    for member in data["members"]:
+        db.cur.execute(f"""SELECT * FROM users WHERE email = '{member["email"]}'""")
+        member = db.cur.fetchone()
+        
+        if member is None:
+            db.cur.execute(f"""INSERT INTO users (id, email)
+                        VALUES           
+                            (DEFAULT, '{member["email"]}')') 
+            """)
+        
+        db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
+                        VALUES           
+                            (DEFAULT, (SELECT id FROM users WHERE email = '{member["email"]}'), (SELECT id FROM organisations WHERE name = '{data["name"]}'), '{member["role"]}')') 
+        """)
+
+
 def get_current_token(request: Request):
     token = request.session.get("access_token")
     if token is None:
@@ -124,6 +161,15 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
         """)
         db.conn.commit()
         
+    else:
+        name = db.cur.execute(f"""SELECT name FROM users WHERE lower(name) = lower('{response["name"]}')""")
+        
+        if name is None:
+            db.cur.execute(f"""
+                           UPDATE users SET name = '{response["name"]}' WHERE lower(email) = lower('{response["email"]}'); 
+                           UPDATE users SET pfp = '{response["picture"]}' WHERE lower(email) = lower('{response["email"]}')
+            """)
+            db.conn.commit()
     
     html_content = """
         <!DOCTYPE html>
