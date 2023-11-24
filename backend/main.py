@@ -127,6 +127,13 @@ async def create_organisation(request: Request):
     # }                                         #
     #############################################
     data = await request.json()
+    if (not "name" in data or not "owner" in data or not "members" in data):
+        raise HTTPException(status_code=400, detail="Invalid data")
+    
+    db.cur.execute(f"""SELECT * FROM organisations WHERE lower(name) = lower('{data["name"]}')""")
+    organisation = db.cur.fetchone()
+    if (organisation is not None):
+        raise HTTPException(status_code=400, detail="Organisation already exists")
     
     db.cur.execute(f"""INSERT INTO organisations (id, name)
                         VALUES           
@@ -159,7 +166,14 @@ async def create_organisation(request: Request):
 
 @app.get("/token", tags=["Authentication"])
 async def get_token(token: str = Depends(get_current_token)):
-    return {"access_token": token}
+    
+    secret_key = os.getenv("SECRET_KEY")
+    try:
+        jwt.decode(token, secret_key, algorithms=["HS256"])
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token is expired")
+    print(f"\n\nToken = {token}\n\n")
+    return token
 
 
 @app.get("/login/google", tags=["Authentication"])
