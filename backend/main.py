@@ -150,8 +150,8 @@ async def create_organisation(request: Request):
         
         db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
                         VALUES           
-                            (DEFAULT, (SELECT id FROM users WHERE email = '{member["email"]}');
-                            (SELECT id FROM organisations WHERE name = '{data["name"]}'), '{member["role"]}')'
+                            (DEFAULT, (SELECT id FROM users WHERE email = '{member["email"]}'),
+                            (SELECT id FROM organisations WHERE name = '{data["name"]}'), '{member["role"]}');
         """)
     
     db.conn.commit()

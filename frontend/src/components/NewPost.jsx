@@ -3,6 +3,15 @@ import videoIcon from '/icon/play-icon.svg'
 import facebookIcon from '/icon/facebook-icon.svg'
 import instagramIcon from '/icon/instagram-icon.svg'
 import twitterIcon from '/icon/x-icon.svg'
+
+import imageIconComplete from '/icon/image-complete.png'
+import videoIconComplete from '/icon/play-complete.png'
+import facebookIconComplete from '/icon/facebook-complete.png'
+import instagramIconComplete from '/icon/instagram-complete.png'
+import twitterIconComplete from '/icon/x-complete.png'
+
+import closeIcon from '/icon/close-icon.svg'
+
 import { useState } from 'react'
 
 export default function NewPost(props) {
@@ -11,6 +20,10 @@ export default function NewPost(props) {
     let [preview, setPreview] = useState(null)
     
     let [inputText, setInputText] = useState("")
+
+    let [xIsUploaded, setXIsUploaded] = useState(false)
+    let [facebookIsUploaded, setFacebookIsUploaded] = useState(false)
+    let [instagramIsUploaded, setInstagramIsUploaded] = useState(false)
 
     const uploadImage = (event) => {
         setImage(() => event.target.files[0]) 
@@ -32,11 +45,21 @@ export default function NewPost(props) {
             image: image,
         }
 
-        setInputText("")
+        props.setpost((prev) => [...prev, post].reverse())
+
+        fileInput = null
         setImage(null)
         setPreview(null)
+        setInputText("")
 
-        props.setpost((prev) => [...prev, post].reverse())
+        setFacebookIsUploaded(false)
+        setInstagramIsUploaded(false)
+        setXIsUploaded(false)
+    }
+
+    const removeImage = () => {
+        setImage(null)
+        setPreview(null)
     }
 
     return (
@@ -49,7 +72,7 @@ export default function NewPost(props) {
 
                         <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
                             <input type="file" onChange={uploadImage} className='hidden' ref={file => fileInput = file}/>
-                            <img onClick={() => fileInput.click()} src={imageIcon} alt="" />
+                            <img onClick={() => fileInput.click()} src={image ? imageIconComplete : imageIcon} alt="" /> 
                         </div>
 
                         <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
@@ -59,17 +82,23 @@ export default function NewPost(props) {
 
                     <div className="flex absolute right-2">
                         <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
-                            <img src={facebookIcon} alt="" />
+                            <img onClick={() => setFacebookIsUploaded((prev) => !prev)} src={facebookIsUploaded ? facebookIconComplete : facebookIcon} alt="" />
                         </div>
+
                         <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
-                            <img src={instagramIcon} alt="" />
+                            <img onClick={() => setInstagramIsUploaded((prev) => !prev)} src={instagramIsUploaded ? instagramIconComplete : instagramIcon} alt="" />
                         </div>
+
                         <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
-                            <img src={twitterIcon} alt="" />
+                            <img onClick={() => setXIsUploaded((prev) => !prev)} src={xIsUploaded ? twitterIconComplete : twitterIcon} alt="" />
                         </div>
                     </div>
                 </div>
-                <img src={preview} className='max-w-md rounded-xl'/>
+
+                { preview && <div className='relative'>
+                        <img onClick={removeImage} src={closeIcon} className='left-2 top-2 hover:scale-105 cursor-pointer duration-100 active:scale-100 absolute' alt="" />
+                        <img src={preview} className='max-w-md rounded-xl'/>
+                    </div> }
 
                 <button onClick={submitPost} className="p-3 w-3/4 text-xl text-text-50 hover:scale-105 active:scale-100 duration-75 hover:bg-secondary-700 bg-accent-600 rounded-xl" type="submit">PUSH FOR REVIEW</button>
             </div>

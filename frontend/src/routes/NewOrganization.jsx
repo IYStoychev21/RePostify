@@ -36,9 +36,7 @@ export default function NewOrganization() {
             owner: userData.data.email
         }
 
-        console.log(data)
         axios.post('http://localhost:8000/organisation/create', data, {withCredentials: true}).then((res) => {
-            console.log(res)
             window.location.href = "/organizations"
         })
     }

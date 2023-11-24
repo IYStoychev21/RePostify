@@ -5,8 +5,6 @@ import useFetch from "../hooks/useFetch";
 export default function Nav() {
     let userData = useFetch('http://localhost:8000/user')
 
-    console.log(userData)
-
     return (
         <>
             <div className="flex h-20 shadow-md">
