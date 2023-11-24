@@ -34,70 +34,6 @@ app.add_middleware(
 drop.drop_db()
 init_db.init_db()
 
-@app.get("/posts/{post_id}")
-def get_post(post_id: int):
-    db.cur.execute(f"""
-                        SELECT * FROM posts WHERE id = {post_id}           
-    """)
-    return db.cur.fetchone()["name"]
-
-
-@app.get("/posts")
-def get_posts():
-    db.cur.execute(f"""
-                        SELECT * FROM posts 
-    """)
-    return db.cur.fetchall()
-
-
-@app.get("/user/organisations/{user_id}")
-def get_user_organisations(user_id: int):
-    db.cur.execute(f"""SELECT * FROM uo_bridge WHERE uid = {user_id}""")
-    rows = db.cur.fetchall()
-    return rows or None    
-
-
-@app.get("/organisation/{organisation_id}")
-def get_organisation(organisation_id: int):
-    db.cur.execute(f"""SELECT * FROM organisations WHERE id = {organisation_id}""")
-    return db.cur.fetchone()
-
-@app.post("/organisation/create")
-async def create_organisation(request: Request):
-    #############################################
-    # {                                         #
-    #     name: "random-org",                   #
-    #     owner: "ivan.stoychev10@gmail.com",   #
-    #     members: [                            #
-    #         {                                 #
-    #         email: randomMail@gmail.com,      #
-    #         role: "user"                      #
-    #         }                                 #
-    #     ]                                     #
-    # }                                         #
-    #############################################
-    data = await request.json()
-    
-    db.cur.execute(f"""INSERT INTO organisations (id, name)
-                        VALUES           
-                            (DEFAULT, '{data["name"]}') 
-    """)
-    
-    for member in data["members"]:
-        db.cur.execute(f"""SELECT * FROM users WHERE email = '{member["email"]}'""")
-        member_db = db.cur.fetchone()
-        
-        if member_db is None:
-            db.cur.execute(f"""INSERT INTO users (id, email)
-                        VALUES           
-                            (DEFAULT, '{member["email"]}')
-            """)
-        
-        db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
-                        VALUES           
-                            (DEFAULT, (SELECT id FROM users WHERE email = '{member["email"]}'), (SELECT id FROM organisations WHERE name = '{data["name"]}'), '{member["role"]}');
-        """)
-
 
 def get_current_token(request: Request):
     token = request.session.get("access_token")
@@ -106,13 +42,59 @@ def get_current_token(request: Request):
     return token
 
 
-@app.get("/token")
-async def get_token(token: str = Depends(get_current_token)):
-    return {"access_token": token}
+@app.get("/posts/{post_id}", tags=["Posts"])
+async def get_post(post_id: int):
+    db.cur.execute(f"""
+                        SELECT * FROM posts WHERE id = {post_id}           
+    """)
+    return db.cur.fetchone()["name"]
 
 
-@app.get("/user")
-async def get_user(request: Request, token: str = Depends(get_current_token)):
+@app.get("/posts", tags=["Posts"])
+async def get_posts():
+    db.cur.execute(f"""
+                        SELECT * FROM posts 
+    """)
+    return db.cur.fetchall()
+
+
+@app.get("/organisation/posts/{organisation_id}", tags=["Posts"])
+async def get_organisation_posts(organisation_id: int):
+    db.cur.execute(f"""SELECT * FROM pou_bridge WHERE oid = {organisation_id}""")
+    return db.cur.fetchall()
+
+
+@app.get("/user/posts/{user_id}", tags=["Posts"])
+async def get_user_posts(user_id: int):
+    db.cur.execute(f"""SELECT * FROM pou_bridge WHERE uid = {user_id}""")
+    return db.cur.fetchall()
+
+
+@app.post("/post/create", tags=["Posts"])
+async def create_post(request: Request):
+    data = await request.json()
+    db.cur.execute(f"""INSERT INTO posts (id, body)
+                        VALUES           
+                            (DEFAULT, '{data["body"]}');
+    """)
+    db.conn.commit()
+    
+    
+@app.delete("/post/delete/{post_id}", tags=["Posts"])
+async def delete_post(post_id: int):
+    db.cur.execute(f"""DELETE FROM posts WHERE id = {post_id}""")
+    db.conn.commit()
+
+
+@app.get("/user/organisations/{user_id}", tags=["Users"])
+def get_user_organisations(user_id: int):
+    db.cur.execute(f"""SELECT * FROM uo_bridge WHERE uid = {user_id}""")
+    rows = db.cur.fetchall()
+    return rows or None    
+
+
+@app.get("/user", tags=["Users"])
+async def get_user_info(request: Request, token: str = Depends(get_current_token)):
     db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get('access_token')}"}).json()["email"]}')""")
     user_info = db.cur.fetchone()
 
@@ -124,22 +106,72 @@ async def get_user(request: Request, token: str = Depends(get_current_token)):
     return user_info
 
 
-@app.get("/signout")
-async def sign_out(request: Request):
-    request.session.pop("access_token", None)
-    return {"detail": "Successfully signed out"}
+@app.get("/organisation/{organisation_id}", tags=["Organisations"])
+async def get_organisation(organisation_id: int):
+    db.cur.execute(f"""SELECT * FROM organisations WHERE id = {organisation_id}""")
+    return db.cur.fetchone()
 
 
-@app.get("/login/google")
+@app.post("/organisation/create", tags=["Organisations"])
+async def create_organisation(request: Request):
+    #############################################
+    # {                                         #
+    #     name: "random-org",                   #
+    #     owner: "owner@gmail.com",             #
+    #     members: [                            #
+    #         {                                 #
+    #           email: member@gmail.com,        #
+    #           role: "user"                    #
+    #         }                                 #
+    #     ]                                     #
+    # }                                         #
+    #############################################
+    data = await request.json()
+    
+    db.cur.execute(f"""INSERT INTO organisations (id, name)
+                        VALUES           
+                            (DEFAULT, '{data["name"]}');
+    """)
+    
+    db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
+                        VALUES           
+                            (DEFAULT, (SELECT id FROM users WHERE email = '{data["owner"]}'), (SELECT id FROM organisations WHERE name = '{data["name"]}'), 'owner');
+    """)
+    
+    for member in data["members"]:
+        db.cur.execute(f"""SELECT * FROM users WHERE email = '{member["email"]}'""");
+        member_db = db.cur.fetchone()
+        
+        if member_db is None:
+            db.cur.execute(f"""INSERT INTO users (id, email)
+                        VALUES           
+                            (DEFAULT, '{member["email"]}');
+            """)
+        
+        db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
+                        VALUES           
+                            (DEFAULT, (SELECT id FROM users WHERE email = '{member["email"]}');
+                            (SELECT id FROM organisations WHERE name = '{data["name"]}'), '{member["role"]}')'
+        """)
+    
+    db.conn.commit()
+
+
+@app.get("/token", tags=["Authentication"])
+async def get_token(token: str = Depends(get_current_token)):
+    return {"access_token": token}
+
+
+@app.get("/login/google", tags=["Authentication"])
 async def login_google():
     load_dotenv()
 
-    return {
+    return {    
         "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={os.getenv("GOOGLE_CLIENT_ID")}&redirect_uri={os.getenv("GOOGLE_REDIRECT_URI")}&scope=openid%20profile%20email&access_type=offline"
     }
 
 
-@app.get("/auth/google", response_class=HTMLResponse)
+@app.get("/auth/google", response_class=HTMLResponse, tags=["Authentication"])
 async def auth_google(code: str, request: Request) -> HTMLResponse:
     token_url = "https://accounts.google.com/o/oauth2/token"
     data = {
@@ -188,3 +220,9 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
     """
 
     return HTMLResponse(content=html_content, status_code=200)
+
+
+@app.delete("/signout", tags=["Authentication"])
+async def sign_out(request: Request):
+    request.session.pop("access_token", None)
+    return {"detail": "Successfully signed out"}

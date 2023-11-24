@@ -34,10 +34,10 @@ def init_db():
             id SERIAL PRIMARY KEY,
             pid INT NOT NULL,
             oid INT NOT NULL,
-            opid INT NOT NULL,
+            uid INT NOT NULL,
             FOREIGN KEY (pid) REFERENCES posts (id),
             FOREIGN KEY (oid) REFERENCES organisations (id),
-            FOREIGN KEY (opid) REFERENCES users (id)
+            FOREIGN KEY (uid) REFERENCES users (id)
         );
         
         CREATE TABLE IF NOT EXISTS uo_bridge (
