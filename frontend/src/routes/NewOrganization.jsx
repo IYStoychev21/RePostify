@@ -2,6 +2,7 @@ import axios from "axios"
 import { useState } from "react"
 import NewMember from "../components/NewMember"
 import useFetch from "../hooks/useFetch"
+import backArrow from "/icon/back-arrow.svg"
 
 class Member {
     constructor() {
@@ -36,7 +37,7 @@ export default function NewOrganization() {
             owner: userData.data.email
         }
 
-        axios.post('http://localhost:8000/organisation/create', data, {withCredentials: true}).then((res) => {
+        axios.post('http://localhost:8000/organisation/create', data, {withCredentials: true}).then(() => {
             window.location.href = "/organizations"
         })
     }
@@ -54,7 +55,10 @@ export default function NewOrganization() {
     return (
         <>
             <div>
-                <h1 className="text-3xl font-light m-4">NEW ORGANIZATION</h1>
+                <div className="text-3xl font-light m-4 relative">
+                    <h1>NEW ORGANIZATION</h1>
+                    <img onClick={() => window.history.back()} className="mt-3 hover:scale-105 absolute active:scale-100 cursor-pointer duration-100" width="80" src={backArrow} alt="" />
+                </div>
 
                 <div className="flex flex-col h-[80vh] justify-center items-center">
                     <form className="flex flex-col w-1/3 p-8 gap-5 bg-background-200 rounded-md" onSubmit={createOrganization} method="post">

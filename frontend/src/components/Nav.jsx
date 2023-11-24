@@ -30,9 +30,8 @@ export default function Nav(props) {
         <>
             <div className="flex h-20 shadow-md">
                 <div className="flex gap-5 ml-6 h-full items-center">
-                    <NavElement text="HOME" handleClick={() => window.location.href = "http://localhost:5173/home"} />
+                    <NavElement text="ORGANIZATIONS" handleClick={() => window.location.href = "http://localhost:5173/organizations"}/>
                     <div className="w-0.5 h-2/5 bg-text-300"></div>
-
                     <NavElement text="ORGANIZATION" handleClick={() => window.location.href = "http://localhost:5173/organization"}/>
                 </div>
 
