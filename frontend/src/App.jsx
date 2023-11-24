@@ -1,5 +1,5 @@
 import React from 'react'
-import {   createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider} from 'react-router-dom'
 import Root from './routes/Root'
 import Home from './routes/Home'
 import Protected from './components/Protected'

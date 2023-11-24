@@ -37,6 +37,10 @@ export default function NewOrganization() {
         }
 
         console.log(data)
+        axios.post('http://localhost:8000/organisation/create', data, {withCredentials: true}).then((res) => {
+            console.log(res)
+            window.location.href = "/organizations"
+        })
     }
 
     const addNewMember = () => {

@@ -1,22 +1,35 @@
 import axios from "axios"
 import Organization from "../components/Organization"
-import useFetch from "../hooks/useFetch"
 import { useEffect, useState } from "react"
 
 export default function Organizations() {
-    let user = useFetch("http://localhost:8000/user")
+    let [user, setUser] = useState(null)
     let [organizations, setOrganizations] = useState([])
+    let [organizationsBridge, setOrganizationsBridge] = useState([])
+
+    useEffect(() => {
+        axios.get('http://localhost:8000/user', {withCredentials: true}).then((res) => {
+            setUser(res)
+        })
+    }, [])
  
     useEffect(() => { 
-        axios.get("http://localhost:8000/user/organisations/1", {withCredentials: true}).then((res) => {
-            res.data.map((org) => {
+        if(user && user.data){
+            axios.get(`http://localhost:8000/user/organisations/${user.data.id}`, {withCredentials: true}).then((res) => {
+                setOrganizationsBridge(res.data)
+            })
+        }
+    }, [user])
+
+    useEffect(() => {
+        if(organizationsBridge && organizationsBridge.length != 0) {
+            organizationsBridge.map((org) => {
                 axios.get(`http://localhost:8000/organisation/${org.oid}`, {withCredentials: true}).then((response) => {
-                    console.log(response.data)
                     setOrganizations((prev) => [...prev, response.data])
                 })
             })
-        })
-    }, [])
+        }
+    }, [organizationsBridge])
 
     return (
         <>

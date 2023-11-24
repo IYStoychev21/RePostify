@@ -80,22 +80,22 @@ async def create_organisation(request: Request):
     
     db.cur.execute(f"""INSERT INTO organisations (id, name)
                         VALUES           
-                            (DEFAULT, '{data["name"]}')) 
+                            (DEFAULT, '{data["name"]}') 
     """)
     
     for member in data["members"]:
         db.cur.execute(f"""SELECT * FROM users WHERE email = '{member["email"]}'""")
-        member = db.cur.fetchone()
+        member_db = db.cur.fetchone()
         
-        if member is None:
+        if member_db is None:
             db.cur.execute(f"""INSERT INTO users (id, email)
                         VALUES           
-                            (DEFAULT, '{member["email"]}')') 
+                            (DEFAULT, '{member["email"]}')
             """)
         
         db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
                         VALUES           
-                            (DEFAULT, (SELECT id FROM users WHERE email = '{member["email"]}'), (SELECT id FROM organisations WHERE name = '{data["name"]}'), '{member["role"]}')') 
+                            (DEFAULT, (SELECT id FROM users WHERE email = '{member["email"]}'), (SELECT id FROM organisations WHERE name = '{data["name"]}'), '{member["role"]}');
         """)
 
 
