@@ -3,6 +3,8 @@ import { useState } from "react"
 import NewMember from "../components/NewMember"
 import useFetch from "../hooks/useFetch"
 import backArrow from "/icon/back-arrow.svg"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class Member {
     constructor() {
@@ -39,6 +41,8 @@ export default function NewOrganization() {
 
         axios.post('http://localhost:8000/organisation/create', data, {withCredentials: true}).then(() => {
             window.location.href = "/organizations"
+        }).catch((err) => {
+            toast.error(err.response.data.detail)
         })
     }
 
@@ -78,6 +82,7 @@ export default function NewOrganization() {
                     </form>
                 </div>
             </div>
+            <ToastContainer />
         </>
     )
 }
