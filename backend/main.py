@@ -106,6 +106,21 @@ async def get_user_info(request: Request, token: str = Depends(get_current_token
     return user_info
 
 
+@app.delete("/user/organisation/{organisation_id}", tags=["Users"])
+async def leave_organisation(request: Request, organisation_id: int):
+    if not "email" in request.session:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    db.cur.execute(f"""SELECT * FROM uo_bridge WHERE lower(email) = lower('{request.session.get("email")}')""")
+    user_role = db.cur.fetchone()["role"]
+    
+    if (user_role == "owner"):
+        raise HTTPException(status_code=401, detail="Cannot leave organisation as owner")
+    
+    db.cur.execute(f"""DELETE FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get("email")}')) AND oid = {organisation_id}""")
+    db.conn.commit()
+
+
 @app.get("/organisation/{organisation_id}", tags=["Organisations"])
 async def get_organisation(organisation_id: int):
     db.cur.execute(f"""SELECT * FROM organisations WHERE id = {organisation_id}""")
