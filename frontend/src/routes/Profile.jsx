@@ -5,7 +5,7 @@ export default function Profile() {
     let userData = useFetch("http://localhost:8000/user")
 
     const signOut = () => {
-        axios.get("http://localhost:8000/signout", { withCredentials: true }).then(() => {
+        axios.delete("http://localhost:8000/signout", { withCredentials: true }).then(() => {
             window.location.href = "/"
         })
     }

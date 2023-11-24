@@ -1,9 +1,30 @@
 import NavElement from "./NavElement";
 import NavUser from "./NavUser"
 import useFetch from "../hooks/useFetch";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-export default function Nav() {
-    let userData = useFetch('http://localhost:8000/user')
+export default function Nav(props) {
+    let [userData, setUserData] = useState(null)
+    let [role, setRole] = useState(null)
+
+    useEffect(() => {
+        axios.get('http://localhost:8000/user', {withCredentials: true}).then((res) => {
+            setUserData(res.data)
+        })
+    }, [])
+
+    useEffect(() => {
+        if(userData){
+            axios.get(`http://localhost:8000/user/organisations/${userData.id}`, {withCredentials: true}).then((res) => {
+                res.data.map(org => {
+                    if(org.oid == props.organizationId){
+                        setRole(org.role)
+                    }
+                })
+            })
+        }
+    }, [userData]) 
 
     return (
         <>
@@ -16,7 +37,7 @@ export default function Nav() {
                 </div>
 
                 <div className="absolute right-[20px] py-2">
-                    {userData.data && <NavUser name={userData.data.name} image={userData.data.pfp} role="USER" />}
+                    {userData && <NavUser name={userData.name} image={userData.pfp} role={role} />}
                 </div>
             </div>
         </>

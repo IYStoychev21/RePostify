@@ -3,6 +3,7 @@ import NewPost from '../components/NewPost'
 import Post from '../components/Post'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import useFetch from '../hooks/useFetch'
 
 export default function Home() {
     let [posts, setPosts] = useState([])
@@ -13,7 +14,8 @@ export default function Home() {
 
     return (
         <>
-            <Nav />
+            <Nav organizationId={organizationId}/>
+            
             <div className='mt-16'>
                 <div className='flex justify-center flex-col items-center'>
                     <div className='w-fit'>
