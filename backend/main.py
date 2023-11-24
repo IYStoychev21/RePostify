@@ -95,7 +95,7 @@ def get_user_organisations(user_id: int):
 
 @app.get("/user", tags=["Users"])
 async def get_user_info(request: Request, token: str = Depends(get_current_token)):
-    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get('access_token')}"}).json()["email"]}')""")
+    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{request.session.get("email")}')""")
     user_info = db.cur.fetchone()
 
     if user_info is None:
@@ -187,6 +187,7 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
 
 
     response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get("access_token")}"}).json()
+    request.session["email"] = response["email"]
     print(f"\n\nresponse = {response}\n\n")
     db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{response["email"]}')""")
     email = db.cur.fetchone()
@@ -207,6 +208,7 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
                            UPDATE users SET pfp = '{response["picture"]}' WHERE lower(email) = lower('{response["email"]}')
             """)
             db.conn.commit()
+    
     
     html_content = """
         <!DOCTYPE html>
