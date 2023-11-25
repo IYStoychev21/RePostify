@@ -1,9 +1,13 @@
 import axios from "axios"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function OrganizationProfile(props) {
     const leaveOrganization = () => {
-        axios.delete(`http://localhost:8000/user/organisation/${props.id}`, {withCredentials: true}).then(() => {
+        axios.delete(`http://localhost:8000/user/organisation/leave/${props.id}`, {withCredentials: true}).then(() => {
             window.location.href = "/organizations"
+        }).catch((err) => {
+            toast.error(err.response.data.detail)
         })
     }
 
@@ -14,6 +18,7 @@ export default function OrganizationProfile(props) {
                 <h1 className="uppercase text-2xl">{props.name}</h1>
                 <button onClick={leaveOrganization} className="rounded-lg hover:bg-[#913636] hover:scale-105 absolute right-6 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f]">LEAVE</button>
             </div> 
+            <ToastContainer />
         </>
     )
 }
