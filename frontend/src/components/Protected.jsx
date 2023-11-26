@@ -8,12 +8,8 @@ export default function Protected({children}) {
     
     useEffect(() => {
         axios.get('http://localhost:8000/user', {withCredentials: true}).then((res) => {
-            if(res.data.detail == "User not found") {
-                setIsLoggedIn(false)
-            } else {
-                setIsLoggedIn(true)
-            }
-        }).catch((err) => {
+            setIsLoggedIn(true)
+        }).catch(() => {
             setIsLoggedIn(false)
         })
     }, [])

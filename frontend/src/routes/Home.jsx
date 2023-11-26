@@ -3,7 +3,6 @@ import NewPost from '../components/NewPost'
 import Post from '../components/Post'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import useFetch from '../hooks/useFetch'
 
 export default function Home() {
     let [posts, setPosts] = useState([])
