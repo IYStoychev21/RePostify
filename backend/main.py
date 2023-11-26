@@ -1,5 +1,5 @@
 from typing import List, Union
-from fastapi import FastAPI, Depends, Request, HTTPException
+from fastapi import FastAPI, Depends, Request, HTTPException, Response
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import HTMLResponse
 from jose import ExpiredSignatureError, jwt
@@ -127,6 +127,74 @@ async def get_organisation(organisation_id: int):
     return db.cur.fetchone()
 
 
+@app.get("/organisation/members/{organisation_id}", tags=["Organisations"])
+async def get_organisation_members(organisation_id: int):
+    db.cur.execute(f"""SELECT role FROM uo_bridge WHERE oid = {organisation_id}""")
+    roles = db.cur.fetchall()
+    
+    db.cur.execute(f"""SELECT uid FROM uo_bridge WHERE oid = {organisation_id}""")
+    user_ids = db.cur.fetchall()
+    
+    users = []
+    
+    for user_id in user_ids:
+        db.cur.execute(f"""SELECT * FROM users WHERE id = {user_id["uid"]}""")
+        users.append(db.cur.fetchone())
+    
+    for i in range(len(user_ids)):
+        users[i]["role"] = roles[i]["role"]
+        
+    return {"users": users}
+
+
+@app.post("/organisation/member/add/{organisation_id}", tags=["Organisations"])
+async def add_member(request: Request, organisation_id: int, response: Response):
+    data = await request.json()
+
+    if not request.session.get("email"):
+        raise HTTPException(status_code=400, detail=f"Not logged in")
+    db.cur.execute(f"""SELECT role FROM uo_bridge WHERE lower(email) = lower('{request.session.get("email")}')""")
+    role: str = db.cur.fetchone()[0]
+    
+    if not role:
+        raise HTTPException(status_code=400, detail="Not logged in")
+    if role.lower() != "owner":
+        raise HTTPException(status_code=403, detail="Missing permission")
+
+    if not isinstance(data["members"], list):
+        raise HTTPException(status_code=400, detail=f"Expected members array, got {type(data["members"])}")
+    if not data["members"]:
+        raise HTTPException(status_code=400, detail="Expected non-empty array, got empty array")
+    
+    members = data["members"]
+    
+    for member in members:
+        if not isinstance(member["email"], str):
+            raise HTTPException(status_code=400, detail=f"Expected member email string, got {type(member["email"])}")
+        if not member["email"]:
+            raise HTTPException(status_code=400, detail="Expected non-empty string, got empty string")
+        
+        if not isinstance(member["role"], str):
+            raise HTTPException(status_code=400, detail=f"Expected member role string, got {type(member["role"])}")
+        if not member["role"]:
+            raise HTTPException(status_code=400, detail="Expected member role string, got empty string")
+        
+        db.cur.execute(f"""SELECT * FROM users WHERE email = '{member["email"]}'""")
+        member_db = db.cur.fetchone()
+        
+        if member_db is None:
+            raise HTTPException(status_code=400, detail=f"User ({member["email"]}) doesn't exist")
+        
+        db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
+                        VALUES           
+                            (DEFAULT, (SELECT id FROM users WHERE email = '{member["email"]}'), {organisation_id}, '{member["role"]}');
+        """)
+    
+    db.conn.commit()
+    
+    response.status_code = 200
+
+
 @app.post("/organisation/create", tags=["Organisations"])
 async def create_organisation(request: Request):
     #############################################
@@ -161,7 +229,7 @@ async def create_organisation(request: Request):
     """)
     
     for member in data["members"]:
-        db.cur.execute(f"""SELECT * FROM users WHERE email = '{member["email"]}'""");
+        db.cur.execute(f"""SELECT * FROM users WHERE email = '{member["email"]}'""")
         member_db = db.cur.fetchone()
         
         if member_db is None:
