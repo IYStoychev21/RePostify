@@ -181,8 +181,9 @@ async def create_organisation(request: Request):
 
 @app.get("/token", tags=["Authentication"])
 async def get_token(token: str = Depends(get_current_token)):
-    
     secret_key = os.getenv("SECRET_KEY")
+    if not token or len(token.split('.')) != 3:
+        raise HTTPException(status_code=401, detail="Invalid token format")
     try:
         jwt.decode(token, secret_key, algorithms=["HS256"])
     except ExpiredSignatureError:
