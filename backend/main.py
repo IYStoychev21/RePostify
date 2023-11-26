@@ -94,12 +94,12 @@ def get_user_organisations(user_id: int):
 
 
 @app.get("/user", tags=["Users"])
-async def get_user_info(request: Request, token: str = Depends(get_current_token)):
+async def get_user_info(request: Request):
     db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{request.session.get("email")}')""")
     user_info = db.cur.fetchone()
 
     if user_info is None:
-        return {"detail": "User not found"}
+        raise HTTPException(status_code=404, detail="User not found")
 
     user_info["pfp"] = user_info["pfp"][0:-4] + "320-c"
 
@@ -181,15 +181,7 @@ async def create_organisation(request: Request):
 
 @app.get("/token", tags=["Authentication"])
 async def get_token(token: str = Depends(get_current_token)):
-    secret_key = os.getenv("SECRET_KEY")
-    if not token or len(token.split('.')) != 3:
-        raise HTTPException(status_code=401, detail="Invalid token format")
-    try:
-        jwt.decode(token, secret_key, algorithms=["HS256"])
-    except ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token is expired")
-    print(f"\n\nToken = {token}\n\n")
-    return token
+    return {"access_token": token}
 
 
 @app.get("/login/google", tags=["Authentication"])
@@ -217,8 +209,9 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
 
 
     response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get("access_token")}"}).json()
+    
     request.session["email"] = response["email"]
-    print(f"\n\nresponse = {response}\n\n")
+    
     db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{response["email"]}')""")
     email = db.cur.fetchone()
     
@@ -239,7 +232,6 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
             """)
             db.conn.commit()
     
-    
     html_content = """
         <!DOCTYPE html>
         <html>
@@ -256,5 +248,9 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
 
 @app.delete("/signout", tags=["Authentication"])
 async def sign_out(request: Request):
+    if (request.session.get("access_token") is None | request.session.get("email") is None):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
     request.session.pop("access_token", None)
+    request.session.pop("email", None)
     return {"detail": "Successfully signed out"}
