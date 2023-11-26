@@ -248,7 +248,7 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
 
 @app.delete("/signout", tags=["Authentication"])
 async def sign_out(request: Request):
-    if (request.session.get("access_token") is None | request.session.get("email") is None):
+    if (request.session.get("access_token") is None or request.session.get("email") is None):
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     request.session.pop("access_token", None)
