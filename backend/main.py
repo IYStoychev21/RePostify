@@ -2,7 +2,7 @@ from typing import List, Union
 from fastapi import FastAPI, Depends, Request, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import HTMLResponse
-from jose import jwt
+from jose import ExpiredSignatureError, jwt
 import requests
 import json
 import db as db
