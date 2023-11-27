@@ -5,6 +5,7 @@ import useFetch from "../hooks/useFetch"
 import backArrow from "/icon/back-arrow.svg"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom'
 
 class Member {
     constructor() {
@@ -25,6 +26,7 @@ export default function NewOrganization() {
     let [name, setName] = useState(null)
     let [membersEntries, setMembersEntries] = useState([])
     let userData = useFetch('http://localhost:8000/user')
+    let naviagte = useNavigate()
     
     const getNameOnChange = (event) => {
         setName(event.target.value)
@@ -40,7 +42,7 @@ export default function NewOrganization() {
         }
 
         axios.post('http://localhost:8000/organisation/create', data, {withCredentials: true}).then(() => {
-            window.location.href = "/organizations"
+            naviagte("/organizations")
         }).catch((err) => {
             toast.error(err.response.data.detail)
         })

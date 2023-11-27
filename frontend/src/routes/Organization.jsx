@@ -3,12 +3,14 @@ import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { useEffect, useState } from "react"
 import NavUser from "../components/NavUser"
+import { useNavigate } from 'react-router-dom'
 
 export default function Organization() {
     let [queryParam] = useSearchParams()
     let [role, setRole] = useState(null)
     let [userData, setUserData] = useState(null)
     let [members, setMembers] = useState([])
+    let navigate = useNavigate()
 
     let organizationId = null
     organizationId = queryParam.get("id")
@@ -40,7 +42,7 @@ export default function Organization() {
     }, [])
 
     if(organizationId == null) {
-        window.location.href = "/organizations"
+        navigate("/organizations")
     } else {
         return (
             <>
@@ -53,7 +55,7 @@ export default function Organization() {
                           }) 
                     }
 
-                    {role == "owner" && <div> <h1 onClick={() => {window.location.href = `/addusers?id=${organizationId}`}} className="py-4 px-8 hover:scale-105 select-none cursor-pointer active:scale-100 duration-100 font-thin border-background-950 border w-fit">Add Users +</h1></div>}
+                    {role == "owner" && <div> <h1 onClick={() => {navigate(`/users/add?id=${organizationId}`)}} className="py-4 px-8 hover:scale-105 select-none cursor-pointer active:scale-100 duration-100 font-thin border-background-950 border w-fit">Add Users +</h1></div>}
                 </div> 
             </>
         )

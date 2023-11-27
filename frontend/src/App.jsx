@@ -14,10 +14,10 @@ export default function App() {
     { path: '/', element: <Root /> },
     { path: '/home', element: <Protected> <Home /> </Protected>},
     { path: '/organizations', element: <Protected> <Organizations /> </Protected>},
-    { path: '/neworganization', element: <Protected> <NewOrganization /> </Protected>},
+    { path: '/organization/create', element: <Protected> <NewOrganization /> </Protected>},
     { path: '/profile', element: <Protected> <Profile /> </Protected>},
     { path: '/organization', element: <Protected> <Organization /> </Protected>},
-    { path: '/addusers', element: <Protected> <AddUsers /> </Protected>},
+    { path: '/users/add', element: <Protected> <AddUsers /> </Protected>},
   ])
 
   return (

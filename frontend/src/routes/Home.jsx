@@ -3,16 +3,18 @@ import NewPost from '../components/NewPost'
 import Post from '../components/Post'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export default function Home() {
     let [posts, setPosts] = useState([])
     let [queryParam] = useSearchParams()
+    let navigate = useNavigate()
     
     let organizationId = null
     organizationId = queryParam.get("id")
 
     if(organizationId == null) {
-        window.location.href = "/organizations"
+        navigate("/organizations")
     } else {
         return (
             <>

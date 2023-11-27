@@ -5,6 +5,7 @@ import backArrow from "/icon/back-arrow.svg"
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom'
 
 class Member {
     constructor() {
@@ -24,6 +25,7 @@ class Member {
 export default function AddUsers() {
     let [queryParam] = useSearchParams()
     let [membersEntries, setMembersEntries] = useState([])
+    let navigate = useNavigate()
 
     let organizationId = null
     organizationId = queryParam.get("id")
@@ -44,14 +46,14 @@ export default function AddUsers() {
         console.log(membersEntries)
         
         axios.post(`http://localhost:8000/organisation/member/add/${organizationId}`, {"members":membersEntries}, {withCredentials: true}).then((res) => {
-            window.location.href = `/organization?id=${organizationId}`
+            navigate(`/organization?id=${organizationId}`)
         }).catch((err) => {
             toast.error(err.response.data.detail)
         })
     }
 
     if(organizationId == null) {
-        window.location.href = "/organizations"
+        navigate("/organizations")
     } else {
         return (
             <>

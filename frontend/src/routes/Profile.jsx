@@ -2,11 +2,13 @@ import axios from "axios"
 import OrganizationProfile from "../components/OrganizationProfile"
 import { useEffect, useState } from "react"
 import backArrow from "/icon/back-arrow.svg"
+import { useNavigate } from 'react-router-dom'
 
 export default function Profile() {
     let [user, setUser] = useState(null)
     let [organizations, setOrganizations] = useState([])
     let [organizationsBridge, setOrganizationsBridge] = useState([])
+    let navigation = useNavigate()
 
     useEffect(() => {
         axios.get('http://localhost:8000/user', {withCredentials: true}).then((res) => {
@@ -34,7 +36,7 @@ export default function Profile() {
 
     const signOut = () => {
         axios.delete("http://localhost:8000/signout", { withCredentials: true }).then(() => {
-            window.location.href = "/"
+            navigation("/")
         })
     }
 
