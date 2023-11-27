@@ -41,10 +41,12 @@ export default function AddUsers() {
     const submitForm = (event) => {
         event.preventDefault()
 
-        axios.post(`http://localhost:8000/organisation/member/add/${organizationId}`, membersEntries, {withCredentials: true}).then((res) => {
+        console.log(membersEntries)
+        
+        axios.post(`http://localhost:8000/organisation/member/add/${organizationId}`, {"members":membersEntries}, {withCredentials: true}).then((res) => {
             window.location.href = `/organization?id=${organizationId}`
         }).catch((err) => {
-            toast.error(err.detail)
+            toast.error(err.response.data.detail)
         })
     }
 

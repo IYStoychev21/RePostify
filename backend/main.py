@@ -75,7 +75,7 @@ async def create_post(request: Request):
     data = await request.json()
     db.cur.execute(f"""INSERT INTO posts (id, body)
                         VALUES           
-                            (DEFAULT, '{data["body"]}');
+                            (DEFAULT, '{data['body']}');
     """)
     db.conn.commit()
     
@@ -95,7 +95,7 @@ def get_user_organisations(user_id: int):
 
 @app.get("/user", tags=["Users"])
 async def get_user_info(request: Request):
-    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{request.session.get("email")}')""")
+    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{request.session.get('email')}')""")
     user_info = db.cur.fetchone()
 
     if user_info is None:
@@ -111,13 +111,13 @@ async def leave_organisation(request: Request, organisation_id: int):
     if not "email" in request.session:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    db.cur.execute(f"""SELECT * FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get("email")}'))""")
+    db.cur.execute(f"""SELECT * FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get('email')}'))""")
     user_role = db.cur.fetchone()["role"]
     
     if (user_role == "owner"):
         raise HTTPException(status_code=401, detail="Cannot leave organisation as owner")
     
-    db.cur.execute(f"""DELETE FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get("email")}')) AND oid = {organisation_id}""")
+    db.cur.execute(f"""DELETE FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get('email')}')) AND oid = {organisation_id}""")
     db.conn.commit()
 
 
@@ -138,7 +138,7 @@ async def get_organisation_members(organisation_id: int):
     users = []
     
     for user_id in user_ids:
-        db.cur.execute(f"""SELECT * FROM users WHERE id = {user_id["uid"]}""")
+        db.cur.execute(f"""SELECT * FROM users WHERE id = {user_id['uid']}""")
         users.append(db.cur.fetchone())
     
     for i in range(len(user_ids)):
@@ -152,9 +152,9 @@ async def add_member(request: Request, organisation_id: int, response: Response)
     data = await request.json()
 
     if not request.session.get("email"):
-        raise HTTPException(status_code=400, detail=f"Not logged in")
-    db.cur.execute(f"""SELECT role FROM uo_bridge WHERE lower(email) = lower('{request.session.get("email")}')""")
-    role: str = db.cur.fetchone()[0]
+        raise HTTPException(status_code=400, detail="Not logged in")
+    db.cur.execute(f"""SELECT role FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get('email')}') LIMIT 1)""")
+    role: str = db.cur.fetchone()["role"]
     
     if not role:
         raise HTTPException(status_code=400, detail="Not logged in")
@@ -162,7 +162,7 @@ async def add_member(request: Request, organisation_id: int, response: Response)
         raise HTTPException(status_code=403, detail="Missing permission")
 
     if not isinstance(data["members"], list):
-        raise HTTPException(status_code=400, detail=f"Expected members array, got {type(data["members"])}")
+        raise HTTPException(status_code=400, detail=f"Expected members array, got {type(data['members'])}")
     if not data["members"]:
         raise HTTPException(status_code=400, detail="Expected non-empty array, got empty array")
     
@@ -170,24 +170,24 @@ async def add_member(request: Request, organisation_id: int, response: Response)
     
     for member in members:
         if not isinstance(member["email"], str):
-            raise HTTPException(status_code=400, detail=f"Expected member email string, got {type(member["email"])}")
+            raise HTTPException(status_code=400, detail=f"Expected member email string, got {type(member['email'])}")
         if not member["email"]:
             raise HTTPException(status_code=400, detail="Expected non-empty string, got empty string")
         
         if not isinstance(member["role"], str):
-            raise HTTPException(status_code=400, detail=f"Expected member role string, got {type(member["role"])}")
+            raise HTTPException(status_code=400, detail=f"Expected member role string, got {type(member['role'])}")
         if not member["role"]:
             raise HTTPException(status_code=400, detail="Expected member role string, got empty string")
         
-        db.cur.execute(f"""SELECT * FROM users WHERE email = '{member["email"]}'""")
+        db.cur.execute(f"""SELECT * FROM users WHERE email = '{member['email']}'""")
         member_db = db.cur.fetchone()
         
         if member_db is None:
-            raise HTTPException(status_code=400, detail=f"User ({member["email"]}) doesn't exist")
+            raise HTTPException(status_code=400, detail=f"User ({member['email']}) doesn't exist")
         
         db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
                         VALUES           
-                            (DEFAULT, (SELECT id FROM users WHERE email = '{member["email"]}'), {organisation_id}, '{member["role"]}');
+                            (DEFAULT, (SELECT id FROM users WHERE email = '{member['email']}'), {organisation_id}, '{member['role']}');
         """)
     
     db.conn.commit()
@@ -213,35 +213,35 @@ async def create_organisation(request: Request):
     if (not "name" in data or not "owner" in data or not "members" in data):
         raise HTTPException(status_code=400, detail="Invalid data")
     
-    db.cur.execute(f"""SELECT * FROM organisations WHERE lower(name) = lower('{data["name"]}')""")
+    db.cur.execute(f"""SELECT * FROM organisations WHERE lower(name) = lower('{data['name']}')""")
     organisation = db.cur.fetchone()
     if (organisation is not None):
         raise HTTPException(status_code=400, detail="Organisation already exists")
     
     db.cur.execute(f"""INSERT INTO organisations (id, name)
                         VALUES           
-                            (DEFAULT, '{data["name"]}');
+                            (DEFAULT, '{data['name']}');
     """)
     
     db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
                         VALUES           
-                            (DEFAULT, (SELECT id FROM users WHERE email = '{data["owner"]}'), (SELECT id FROM organisations WHERE name = '{data["name"]}'), 'owner');
+                            (DEFAULT, (SELECT id FROM users WHERE email = '{data['owner']}'), (SELECT id FROM organisations WHERE name = '{data['name']}'), 'owner');
     """)
     
     for member in data["members"]:
-        db.cur.execute(f"""SELECT * FROM users WHERE email = '{member["email"]}'""")
+        db.cur.execute(f"""SELECT * FROM users WHERE email = '{member['email']}'""")
         member_db = db.cur.fetchone()
         
         if member_db is None:
             db.cur.execute(f"""INSERT INTO users (id, email)
                         VALUES           
-                            (DEFAULT, '{member["email"]}');
+                            (DEFAULT, '{member['email']}');
             """)
         
         db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
                         VALUES           
-                            (DEFAULT, (SELECT id FROM users WHERE email = '{member["email"]}'),
-                            (SELECT id FROM organisations WHERE name = '{data["name"]}'), '{member["role"]}');
+                            (DEFAULT, (SELECT id FROM users WHERE email = '{member['email']}'),
+                            (SELECT id FROM organisations WHERE name = '{data['name']}'), '{member['role']}');
         """)
     
     db.conn.commit()
@@ -257,7 +257,7 @@ async def login_google():
     load_dotenv()
 
     return {    
-        "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={os.getenv("GOOGLE_CLIENT_ID")}&redirect_uri={os.getenv("GOOGLE_REDIRECT_URI")}&scope=openid%20profile%20email&access_type=offline"
+        "url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={os.getenv('GOOGLE_CLIENT_ID')}&redirect_uri={os.getenv('GOOGLE_REDIRECT_URI')}&scope=openid%20profile%20email&access_type=offline"
     }
 
 
@@ -276,27 +276,27 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
     request.session["access_token"] = access_token
 
 
-    response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get("access_token")}"}).json()
+    response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers={"Authorization": f"Bearer {request.session.get('access_token')}"}).json()
     
     request.session["email"] = response["email"]
     
-    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{response["email"]}')""")
+    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{response['email']}')""")
     email = db.cur.fetchone()
     
     if email is None:
         db.cur.execute(f"""INSERT INTO users (id, name, email, pfp)
                         VALUES
-                            (DEFAULT, '{response["name"]}', '{response["email"]}', '{response["picture"]}');
+                            (DEFAULT, '{response['name']}', '{response['email']}', '{response['picture']}');
         """)
         db.conn.commit()
         
     else:
-        name = db.cur.execute(f"""SELECT name FROM users WHERE lower(name) = lower('{response["name"]}')""")
+        name = db.cur.execute(f"""SELECT name FROM users WHERE lower(name) = lower('{response['name']}')""")
         
         if name is None:
             db.cur.execute(f"""
-                           UPDATE users SET name = '{response["name"]}' WHERE lower(email) = lower('{response["email"]}'); 
-                           UPDATE users SET pfp = '{response["picture"]}' WHERE lower(email) = lower('{response["email"]}')
+                           UPDATE users SET name = '{response['name']}' WHERE lower(email) = lower('{response['email']}'); 
+                           UPDATE users SET pfp = '{response['picture']}' WHERE lower(email) = lower('{response['email']}')
             """)
             db.conn.commit()
     
