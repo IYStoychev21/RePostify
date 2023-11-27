@@ -2,7 +2,7 @@
 export default function Nav(props) {
     return (
         <>
-            <div onClick={props.handleClick} className="flex h-20 items-center justify-center hover:scale-105 cursor-pointer duration-150 active:scale-100 select-none">
+            <div onClick={props.handleClick} className="uppercase flex h-20 items-center justify-center hover:scale-105 cursor-pointer duration-150 active:scale-100 select-none">
                 <h1> {props.text} </h1>
             </div>
         </>

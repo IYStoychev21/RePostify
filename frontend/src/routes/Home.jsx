@@ -22,10 +22,10 @@ export default function Home() {
                 
                 <div className='mt-16'>
                     <div className='flex justify-center flex-col items-center'>
-                        <div className='w-fit'>
+                        <div className='w-min'>
                             <NewPost setpost={setPosts} />
 
-                            <h1 className='text-2xl font-light my-5'>POST FOR REVIEW</h1>
+                            <h1 className='text-2xl font-light my-5 uppercase'>push for review</h1>
 
                             <div className='flex justify-center flex-col w-full gap-8 mb-10'>
                                 {

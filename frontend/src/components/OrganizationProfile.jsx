@@ -16,7 +16,7 @@ export default function OrganizationProfile(props) {
             <div className="p-6 flex items-center gap-16 duration-100 hover:bg-background-300 relative">
                 <img className="rounded-xl" src={`https://ui-avatars.com/api/?name=${props.name}&size=64`} alt="" />
                 <h1 className="uppercase text-2xl">{props.name}</h1>
-                <button onClick={leaveOrganization} className="rounded-lg hover:bg-[#913636] hover:scale-105 absolute right-6 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f]">LEAVE</button>
+                <button onClick={leaveOrganization} className="rounded-lg hover:bg-[#913636] hover:scale-105 absolute right-6 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f] uppercase">leave</button>
             </div> 
             <ToastContainer />
         </>

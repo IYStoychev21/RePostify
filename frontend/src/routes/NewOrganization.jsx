@@ -62,7 +62,7 @@ export default function NewOrganization() {
         <>
             <div>
                 <div className="text-3xl font-light m-4 relative">
-                    <h1>NEW ORGANIZATION</h1>
+                    <h1 className="uppercase">new organisation</h1>
                     <img onClick={() => window.history.back()} className="mt-3 hover:scale-105 absolute active:scale-100 cursor-pointer duration-100" width="80" src={backArrow} alt="" />
                 </div>
 
@@ -79,7 +79,7 @@ export default function NewOrganization() {
                         </div>
 
                         <button onClick={addNewMember} className="rounded-md bg-accent-200 p-2 hover:scale-105 hover:bg-accent-300 active:scale-100 duration-100"> Add New Member </button>
-                        <button type="submit" className="p-3 bg-secondary-600 duration-100 hover:scale-105 hover:bg-secondary-700 active:scale-100 rounded-md">CREATE NEW ORGANIZATION</button>
+                        <button type="submit" className="p-3 bg-secondary-600 duration-100 hover:scale-105 hover:bg-secondary-700 active:scale-100 rounded-md uppercase">create new organisation</button>
 
                     </form>
                 </div>
