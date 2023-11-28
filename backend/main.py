@@ -61,7 +61,19 @@ async def get_posts():
 @app.get("/organisation/posts/{organisation_id}", tags=["Posts"])
 async def get_organisation_posts(organisation_id: int):
     db.cur.execute(f"""SELECT * FROM pou_bridge WHERE oid = {organisation_id}""")
-    return db.cur.fetchall()
+    pou_data = db.cur.fetchall()
+    
+    result = []
+    
+    for (i, pou) in enumerate(pou_data):
+        db.cur.execute(f"""SELECT * FROM posts WHERE id = {pou['pid']}""")
+        post = db.cur.fetchone()
+        db.cur.execute(f"""SELECT * FROM users WHERE id = {pou['uid']}""")
+        user = db.cur.fetchone()
+        
+        result.append({"post": post, "user": user})
+        
+    return result
 
 
 @app.get("/user/posts/{user_id}", tags=["Posts"])
@@ -70,13 +82,28 @@ async def get_user_posts(user_id: int):
     return db.cur.fetchall()
 
 
-@app.post("/post/create", tags=["Posts"])
-async def create_post(request: Request):
+@app.post("/post/create/{organisation_id}", tags=["Posts"])
+async def create_post(request: Request, organisation_id: int):
     data = await request.json()
+    
+    if not request.session.get('email'):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
     db.cur.execute(f"""INSERT INTO posts (id, body)
                         VALUES           
-                            (DEFAULT, '{data['body']}');
+                            (DEFAULT, '{data['body']}') RETURNING id;
     """)
+    
+    post_id = db.cur.fetchone()["id"]
+    
+    db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{request.session.get('email')}')""")
+    user_id = db.cur.fetchone()["id"]
+    
+    db.cur.execute(f"""INSERT INTO pou_bridge (id, pid, oid, uid)
+                        VALUES
+                            (DEFAULT, {post_id}, {organisation_id}, {user_id});
+    """)     
+                        
     db.conn.commit()
     
     

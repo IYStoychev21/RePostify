@@ -27,7 +27,13 @@ def init_db():
             
         CREATE TABLE IF NOT EXISTS posts (
             id SERIAL PRIMARY KEY,
-            body VARCHAR(2000)
+            body VARCHAR(2000),
+            approved BOOLEAN NOT NULL DEFAULT FALSE,
+            uploaded TIMESTAMP DEFAULT NULL,
+            attachment VARCHAR DEFAULT NULL,
+            facebook BOOLEAN NOT NULL DEFAULT FALSE,
+            twitter BOOLEAN NOT NULL DEFAULT FALSE,
+            instagram BOOLEAN NOT NULL DEFAULT FALSE
         );
                     
         CREATE TABLE IF NOT EXISTS pou_bridge (
