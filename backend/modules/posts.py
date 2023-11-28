@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Request
 from typing import List
 from pydantic import BaseModel
 from . import db
+import re
 
 class Post(BaseModel):
     body: str
@@ -77,10 +78,10 @@ async def create_post(request: Request, organisation_id: int, body: Post):
     if not request.session.get('email'):
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    db.cur.execute(f"""INSERT INTO posts (id, body)
+    db.cur.execute("""INSERT INTO posts (id, body)
                         VALUES           
-                            (DEFAULT, '{body.body}') RETURNING id;
-    """)
+                            (DEFAULT, %s) RETURNING id;
+    """, (body.body, ))
     
     post_id = db.cur.fetchone()["id"] # type: ignore
     
