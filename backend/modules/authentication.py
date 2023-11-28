@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Request
 from fastapi import APIRouter, Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import RedirectResponse
 import requests
 from modules.get_token import get_current_token
 import modules.db as db
@@ -23,8 +23,8 @@ async def login_google():
     }
 
 
-@router.get("/auth/google", response_class=HTMLResponse, tags=["Authentication"])
-async def auth_google(code: str, request: Request) -> HTMLResponse:
+@router.get("/auth/google", response_class=RedirectResponse, tags=["Authentication"])
+async def auth_google(code: str, request: Request) -> RedirectResponse:
     token_url = "https://accounts.google.com/o/oauth2/token"
     data = {
         "code": code,
@@ -61,19 +61,8 @@ async def auth_google(code: str, request: Request) -> HTMLResponse:
                         UPDATE users SET pfp = '{response['picture']}' WHERE lower(email) = lower('{response['email']}')
             """)
             db.conn.commit()
-    
-    html_content = """
-        <!DOCTYPE html>
-        <html>
-            <body>
-                <script>
-                    window.location.href = "http://localhost:5173/organizations";
-                </script>
-            </body>
-        </html>        
-    """
 
-    return HTMLResponse(content=html_content, status_code=200)
+    return RedirectResponse(url="http://localhost:5173/organizations")
 
 
 @router.delete("/signout", tags=["Authentication"])

@@ -16,13 +16,14 @@ def get_user_organisations(user_id: int):
 async def get_user_info(request: Request):
     try:
         email: EmailStr = request.session.get("email") # type: ignore
-        if not EmailStr:
+        if not email:
             raise TypeError
         
-        db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{re.escape(email)}')""")
+        db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{email}')""")
         user_info = db.cur.fetchone()
         
         if user_info is None:
+            print("\n\nhello\n\n")
             raise TypeError
         
         user_info["pfp"] = user_info["pfp"][0:-4] + "320-c"

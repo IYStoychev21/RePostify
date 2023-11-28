@@ -100,10 +100,7 @@ async def create_organisation(request: Request, body: CreateOrganisationBody):
         member_db = db.cur.fetchone()
         
         if member_db is None:
-            db.cur.execute(f"""INSERT INTO users (id, email)
-                        VALUES           
-                            (DEFAULT, '{member.email}');
-            """)
+            raise HTTPException(status_code=400, detail=f"User ({member.email}) doesn't exist")
         
         db.cur.execute(f"""INSERT INTO uo_bridge (id, uid, oid, role)
                         VALUES           
