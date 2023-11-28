@@ -40,6 +40,12 @@ export default function Profile() {
         })
     }
 
+    const deleteAccount = () => {
+        axios.delete("http://localhost:8000/user/delete", { withCredentials: true }).then(() => {
+            navigation("/")
+        })
+    }
+
     return (
         <>
             <div>
@@ -68,7 +74,7 @@ export default function Profile() {
                         <div className="w-full h-2/5 bg-background-200 rounded-[40px] grid place-content-center">
                             <div className="flex gap-10">
                                 <button onClick={signOut} className="rounded-lg hover:bg-[#913636] hover:scale-105 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f]">Sign Out</button>
-                                <button className="rounded-lg hover:bg-[#913636] hover:scale-105 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f]">Delete Account</button>
+                                <button onClick={deleteAccount} className="rounded-lg hover:bg-[#913636] hover:scale-105 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f]">Delete Account</button>
                             </div>
                         </div>
                     </div>
