@@ -42,8 +42,6 @@ export default function AddUsers() {
 
     const submitForm = (event) => {
         event.preventDefault()
-
-        console.log(membersEntries)
         
         axios.post(`http://localhost:8000/organisation/member/add/${organizationId}`, {"members":membersEntries}, {withCredentials: true}).then((res) => {
             navigate(`/organization?id=${organizationId}`)

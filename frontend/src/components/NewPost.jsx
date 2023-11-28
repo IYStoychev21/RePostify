@@ -44,11 +44,13 @@ export default function NewPost(props) {
 
     const submitPost = () => {
         let post = {
-            text: inputText,
+            body: inputText,
             image: image,
         }
 
-        props.setpost((prev) => [...prev, post])
+        axios.post(`http://localhost:8000/post/create/${props.organizationId}`, post, {withCredentials: true}).then(() => {
+            window.location.reload()
+        })
 
         fileInput = null
         setImage(null)
@@ -103,7 +105,7 @@ export default function NewPost(props) {
                         <img src={preview} className='max-w-md rounded-xl'/>
                     </div> }
 
-                <button onClick={submitPost} className="p-3 w-3/4 text-xl text-text-50 hover:scale-105 active:scale-100 duration-75 hover:bg-secondary-700 bg-accent-600 rounded-xl" type="submit">PUSH FOR REVIEW</button>
+                <button onClick={submitPost} className="p-3 w-3/4 text-xl text-text-50 hover:scale-105 active:scale-100 duration-75 hover:bg-secondary-700 bg-accent-600 rounded-xl uppercase" type="submit">push for review</button>
             </div>
         </>
     )
