@@ -13,6 +13,7 @@ import twitterIconComplete from '/icon/x-complete.png'
 import closeIcon from '/icon/close-icon.svg'
 
 import { useState } from 'react'
+import axios from 'axios'
 
 export default function NewPost(props) {
     let fileInput = null

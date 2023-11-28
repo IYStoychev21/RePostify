@@ -34,7 +34,6 @@ app.add_middleware(
 drop.drop_db()
 init_db.init_db()
 
-
 def get_current_token(request: Request):
     token = request.session.get("access_token")
     if token is None:
