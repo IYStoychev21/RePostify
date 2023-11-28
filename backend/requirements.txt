@@ -6,7 +6,9 @@ charset-normalizer==3.3.2
 click==8.1.7
 colorama==0.4.6
 cryptography==41.0.5
+dnspython==2.4.2
 ecdsa==0.18.0
+email-validator==2.1.0.post1
 fastapi==0.104.1
 h11==0.14.0
 httptools==0.6.1

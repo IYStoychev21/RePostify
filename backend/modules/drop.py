@@ -1,4 +1,4 @@
-import db
+import modules.db as db
 
 def drop_db():
     db.cur.execute("""
