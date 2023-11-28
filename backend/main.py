@@ -126,8 +126,8 @@ async def delete_user(request: Request, response: Response):
     if not "email" in request.session:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    db.cur.execute(f"""DELECT * FROM pou_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get('email')}'))""")
-    db.cur.execute(f"""DELETE * FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get('email')}'))""")
+    db.cur.execute(f"""DELETE FROM pou_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get('email')}'))""")
+    db.cur.execute(f"""DELETE FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get('email')}'))""")
     db.cur.execute(f"""DELETE FROM users WHERE lower(email) = lower('{request.session.get('email')}')""")
     db.conn.commit()
     
