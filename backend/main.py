@@ -119,6 +119,24 @@ async def leave_organisation(request: Request, organisation_id: int):
     
     db.cur.execute(f"""DELETE FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get('email')}')) AND oid = {organisation_id}""")
     db.conn.commit()
+    
+
+@app.delete("/user/delete", tags=["Users"])
+async def delete_user(request: Request, response: Response):
+    if not "email" in request.session:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    db.cur.execute(f"""DELECT * FROM pou_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get('email')}'))""")
+    db.cur.execute(f"""DELETE * FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower('{request.session.get('email')}'))""")
+    db.cur.execute(f"""DELETE FROM users WHERE lower(email) = lower('{request.session.get('email')}')""")
+    db.conn.commit()
+    
+    request.session.pop("access_token", None)
+    request.session.pop("email", None)
+    
+    response.status_code = 200
+    
+    return {"detail": "Successfully deleted user"}
 
 
 @app.get("/organisation/{organisation_id}", tags=["Organisations"])
