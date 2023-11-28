@@ -3,12 +3,14 @@ import OrganizationProfile from "../components/OrganizationProfile"
 import { useEffect, useState } from "react"
 import backArrow from "/icon/back-arrow.svg"
 import { useNavigate } from 'react-router-dom'
+import Modal from "react-modal"
 
 export default function Profile() {
     let [user, setUser] = useState(null)
     let [organizations, setOrganizations] = useState([])
     let [organizationsBridge, setOrganizationsBridge] = useState([])
     let navigation = useNavigate()
+    let [modalIsOpen, setModalIsOpen] = useState(false)
 
     useEffect(() => {
         axios.get('http://localhost:8000/user', {withCredentials: true}).then((res) => {
@@ -40,6 +42,20 @@ export default function Profile() {
         })
     }
 
+    const deleteAccount = () => {
+        setModalIsOpen(true)
+    }
+    
+    const confirmDelete = () => {
+        axios.delete("http://localhost:8000/user/delete", { withCredentials: true }).then(() => {
+            navigation("/")
+        })
+    }
+
+    const closeModal = () => {
+        setModalIsOpen(false)
+    }
+
     return (
         <>
             <div>
@@ -68,12 +84,22 @@ export default function Profile() {
                         <div className="w-full h-2/5 bg-background-200 rounded-[40px] grid place-content-center">
                             <div className="flex gap-10">
                                 <button onClick={signOut} className="rounded-lg hover:bg-[#913636] hover:scale-105 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f]">Sign Out</button>
-                                <button className="rounded-lg hover:bg-[#913636] hover:scale-105 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f]">Delete Account</button>
+                                <button onClick={deleteAccount} className="rounded-lg hover:bg-[#913636] hover:scale-105 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f]">Delete Account</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <Modal isOpen={modalIsOpen} ariaHideApp={false} className="flex flex-col items-center justify-center h-screen">
+                <div>
+                    <h1 className="text-2xl">Are you sure you want to delete your account?</h1>
+                    <div className="flex gap-10 mt-10 w-full items-center justify-center">
+                        <button onClick={confirmDelete} className="rounded-lg hover:bg-[#913636] hover:scale-105 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f]">Yes</button>
+                        <button onClick={closeModal} className="rounded-lg hover:bg-[#913636] hover:scale-105 text-[#fff] active:scale-100 duration-100 p-4 bg-[#ba3f3f]">No</button>
+                    </div>
+                </div>
+            </Modal>
         </>
     )
 }

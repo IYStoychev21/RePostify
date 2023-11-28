@@ -33,7 +33,7 @@ export default function Nav(props) {
                     <div className="w-0.5 h-2/5 bg-text-300"></div>
                     <NavElement text="organisations" handleClick={() => window.location.href = "http://localhost:5173/organizations"}/>
                     <div className="w-0.5 h-2/5 bg-text-300"></div>
-                    <NavElement text="organization" handleClick={() => window.location.href = `http://localhost:5173/organization?id=${props.organizationId}`}/>
+                    <NavElement text="this organisation" handleClick={() => window.location.href = `http://localhost:5173/organization?id=${props.organizationId}`}/>
                 </div>
 
                 <div className="absolute right-[20px] py-2">

@@ -72,8 +72,8 @@ export default function AddUsers() {
                                 }
                             </div>
 
-                            <button onClick={addNewMember} className="rounded-md bg-accent-200 p-2 hover:scale-105 hover:bg-accent-300 active:scale-100 duration-100"> Add New Entry </button>
-                            <button type="submit" className="p-3 bg-secondary-600 duration-100 hover:scale-105 hover:bg-secondary-700 active:scale-100 rounded-md">Add New Member</button>
+                            <button onClick={addNewMember} className="rounded-md bg-accent-200 p-2 hover:scale-105 hover:bg-accent-300 active:scale-100 duration-100"> Add New Member </button>
+                            <button type="submit" className="p-3 bg-secondary-600 duration-100 hover:scale-105 hover:bg-secondary-700 active:scale-100 rounded-md">Confirm</button>
                         </form>
                     </div>
                 </div> 
