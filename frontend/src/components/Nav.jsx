@@ -4,40 +4,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Nav(props) {
-    let [userData, setUserData] = useState(null)
-    let [role, setRole] = useState(null)
-
-    useEffect(() => {
-        axios.get('http://localhost:8000/user', {withCredentials: true}).then((res) => {
-            setUserData(res.data)
-        })
-    }, [])
-
-    useEffect(() => {
-        if(userData){
-            axios.get(`http://localhost:8000/user/organisations/${userData.id}`, {withCredentials: true}).then((res) => {
-                res.data.map(org => {
-                    if(org.oid == props.organizationId){
-                        setRole(org.role)
-                    }
-                })
-            })
-        }
-    }, [userData]) 
-
     return (
         <>
-            <div className="flex h-20 shadow-md">
-                <div className="flex gap-5 ml-6 h-full items-center">
+            <div className="flex h-20 justify-end gap-8">
+                <div className="flex gap-6 ml-6 h-full items-center">
                     <NavElement text="home" handleClick={() => window.location.href = `http://localhost:5173/home?id=${props.organizationId}`}/>
-                    <div className="w-0.5 h-2/5 bg-text-300"></div>
                     <NavElement text="organisations" handleClick={() => window.location.href = "http://localhost:5173/organizations"}/>
-                    <div className="w-0.5 h-2/5 bg-text-300"></div>
                     <NavElement text="this organisation" handleClick={() => window.location.href = `http://localhost:5173/organization?id=${props.organizationId}`}/>
                 </div>
 
-                <div className="absolute right-[20px] py-2">
-                    {userData && <NavUser redirect={() => window.location.href = "/profile"} name={userData.name} image={userData.pfp} role={role} />}
+                <div className="p-5 flex justify-center">
+                    <button onClick={() => window.location.href = "/profile"} className="border-2 text-white p-4 px-16 hover:scale-105 active:scale-100 duration-100 flex justify-center items-center border-gray">My Account</button>
                 </div>
             </div>
         </>

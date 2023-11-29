@@ -6,6 +6,8 @@ import backArrow from "/icon/back-arrow.svg"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom'
+import bgElement from "/background/background-new.png"
+import bgCirle from "/background/background-cricle.png"
 
 class Member {
     constructor() {
@@ -60,16 +62,17 @@ export default function NewOrganization() {
 
     return (
         <>
-            <div>
-                <div className="text-3xl font-light m-4 relative">
+            <div className="overflow-hidden">
+                {/* <div className="text-3xl font-light m-4 relative">
                     <h1 className="uppercase">new organisation</h1>
                     <img onClick={() => window.history.back()} className="mt-3 hover:scale-105 absolute active:scale-100 cursor-pointer duration-100" width="80" src={backArrow} alt="" />
-                </div>
+                </div> */}
 
-                <div className="flex flex-col h-[80vh] justify-center items-center">
-                    <form className="flex flex-col w-1/3 p-8 gap-5 bg-background-200 rounded-md" onSubmit={createOrganization} method="post">
+                <div className="flex overflow-hidden flex-col h-screen justify-center items-center bg-background-gray relative">
+                    <form className="z-10 flex flex-col w-3/5 rounded-xl py-16 px-32 gap-5 bg-[#ffffff20]" onSubmit={createOrganization} method="post">
 
                         <input type="text" onChange={getNameOnChange} className="w-full p-2 rounded-md" placeholder="ORGANIZATION NAME" name="name" id="name" required/> 
+
                         <div className="flex flex-col gap-4">
                             {
                                 membersEntries.map((member, index) => {
@@ -78,10 +81,13 @@ export default function NewOrganization() {
                             }
                         </div>
 
-                        <button onClick={addNewMember} className="rounded-md bg-accent-200 p-2 hover:scale-105 hover:bg-accent-300 active:scale-100 duration-100"> Add New Member </button>
-                        <button type="submit" className="p-3 bg-secondary-600 duration-100 hover:scale-105 hover:bg-secondary-700 active:scale-100 rounded-md uppercase">create new organisation</button>
+                        <button onClick={addNewMember} className="rounded-md bg-gradient-to-r from-[#7700A0] to-[#E40045] p-2 hover:scale-105 hover:bg-accent-300 active:scale-100 duration-100"> Add New Member </button>
+                        <button type="submit" className="p-3 bg-gradient-to-r from-[#7700A0] to-[#E40045] duration-100 hover:scale-105 hover:bg-secondary-700 active:scale-100 rounded-md uppercase">create new organisation</button>
 
                     </form>
+
+                    <img src={bgElement} className="absolute z-0 top-0 left-0 w-full" alt="" />
+                    <img src={bgCirle} className="absolute z-0 top-0 right-0" alt="" />
                 </div>
             </div>
             <ToastContainer />
