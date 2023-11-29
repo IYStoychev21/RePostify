@@ -83,9 +83,9 @@ export default function NewPost(props) {
                             <img onClick={() => fileInput.click()} src={image ? imageIconComplete : imageIcon} alt="" /> 
                         </div>
 
-                        <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
+                        {/* <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
                             <img src={videoIcon} alt="" />
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="flex absolute right-2">
@@ -93,13 +93,13 @@ export default function NewPost(props) {
                             <img onClick={() => setFacebookIsUploaded((prev) => !prev)} src={facebookIsUploaded ? facebookIconComplete : facebookIcon} alt="" />
                         </div>
 
-                        <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
+                        {/* <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
                             <img onClick={() => setInstagramIsUploaded((prev) => !prev)} src={instagramIsUploaded ? instagramIconComplete : instagramIcon} alt="" />
                         </div>
 
                         <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
                             <img onClick={() => setXIsUploaded((prev) => !prev)} src={xIsUploaded ? twitterIconComplete : twitterIcon} alt="" />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

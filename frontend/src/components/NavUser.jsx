@@ -2,13 +2,15 @@
 export default function NavUser(props) {
     return (
         <>
-            <div className="flex gap-3">
-                <div className="flex justify-center items-center flex-col">
-                    <h2 className="font-bold text-2xl"> {props.name} </h2>
-                    <h2 className="font-thin uppercase rounded-md bg-secondary-300 px-3"> {props.role} </h2>
-                </div>     
-                <img onClick={() => {props.redirect()}} className="rounded-full hover:scale-105 cursor-pointer duration-150 active:scale-100 select-none bg-accent-500" src={props.image} height="62" width="62" alt="" />
-            </div> 
+            <div className="text-white flex flex-col items-center justify-center select-none relative z-10 bg-[#ffffff20] p-5 w-[160px] h-[260px] rounded-xl text-xl border-black border">
+                <div className="w-16 h-16 rounded-full bg-gray-400 flex items-center justify-center">
+                    <img src={props.image} className="w-[100px] rounded-full" />
+                </div>
+                <div className="text-center">
+                    <p className="text-2xl font-semibold">{props.name}</p>
+                    <p className="text-xl uppercase mt-4 border-white border-2 rounded-sm">{props.role}</p>
+                </div>
+            </div>
         </>
     )
 }

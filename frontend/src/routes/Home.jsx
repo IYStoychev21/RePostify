@@ -31,14 +31,14 @@ export default function Home() {
             <>
                 <Nav organizationId={organizationId}/>
                 
-                <div className='mt-16 flex justify-center items-center'>
-                    <div className='flex justify-center min-h-[90vh] flex-col items-center bg-[#0d0d0d] rounded-md w-[90%]'>
-                        <div className='w-full flex justify-center items-start gap-24 relative'>
+                <div className='mt-16 mb-28 flex justify-center items-center relative z-20'>
+                    <div className='flex justify-center min-h-[90vh] flex-col items-center bg-[#ffffff20] border-gray border rounded-md w-[90%]'>
+                        <div className='w-full flex justify-center items-start gap-24 relative max-[1000px]:flex-col max-[1000px]:items-center'>
                             <div className='my-16'>
                                 <NewPost organizationId={organizationId} setposts={setPosts} />
                             </div>
 
-                            <div>
+                            <div className='w-[50%]'>
                                 <h1 className='text-2xl text-white py-10 my-5 uppercase font-bold'>push for review</h1>
 
                                 <div className='flex justify-center flex-col gap-8 mb-10'>
@@ -53,11 +53,11 @@ export default function Home() {
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* <div className='w-screen h-screen overflow-hidden absolute top-0'>
-                        <img src={magentaCircle} className='absolute z-[-1] top-0 w-screen right-0' alt='' />
-                        <img src={purpleCircle} className='absolute z-[-1] bottom-0 w-screen left-0' alt='' />
-                    </div> */}
+                <div className='w-screen h-screen overflow-hidden absolute top-0'>
+                    <img src={magentaCircle} className='absolute z-[-1] top-0 select-none right-0' alt='' />
+                    <img src={purpleCircle} className='fixed z-[-1] bottom-0 select-none left-0' alt='' />
                 </div>
             </>
         )

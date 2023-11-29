@@ -2,8 +2,10 @@ import Nav from "../components/Nav"
 import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { useEffect, useState } from "react"
-import NavUser from "../components/NavUser"
 import { useNavigate } from 'react-router-dom'
+import bgElement from "/background/background-new.png"
+import bgCirle from "/background/background-cricle.png"
+import NavUser from "../components/NavUser"
 
 export default function Organization() {
     let [queryParam] = useSearchParams()
@@ -48,6 +50,8 @@ export default function Organization() {
             <>
                 <Nav organizationId={organizationId} />
 
+                <h1 className="relative z-10 text-white text-5xl font-bold text-center mt-24 mb-12">Members</h1>
+
                 <div className="m-6 flex gap-6">
                     {
                        members.map((member) => {
@@ -55,7 +59,13 @@ export default function Organization() {
                           }) 
                     }
 
-                    {role == "owner" && <div> <h1 onClick={() => {navigate(`/users/add?id=${organizationId}`)}} className="py-4 px-8 hover:scale-105 select-none cursor-pointer active:scale-100 duration-100 font-thin border-background-950 border w-fit">Add Users +</h1></div>}
+                    {role == "owner" &&
+                    <div onClick={() => {navigate(`/users/add?id=${organizationId}`)}} className="flex text-center relative z-10 flex-col items-center justify-center bg-[#ffffff20] p-5 w-[160px] h-[260px] rounded-xl cursor-pointer text-xl hover:scale-105 active:scale-100 duration-100 border-black border">
+                        <h1 className="text-white select-none">Add Member</h1>
+                    </div>}
+                    
+                    <img src={bgElement} className="absolute z-0 top-0 left-0 w-full" alt="" />
+                    <img src={bgCirle} className="absolute z-0 top-0 right-0" alt="" />
                 </div> 
             </>
         )
