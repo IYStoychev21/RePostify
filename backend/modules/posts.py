@@ -78,6 +78,12 @@ async def create_post(request: Request, organisation_id: int, body: Post):
     if not request.session.get('email'):
         raise HTTPException(status_code=401, detail="Not authenticated")
     
+    db.cur.execute(f"""SELECT * FROM organisations WHERE id = {organisation_id}""")
+    organisation = db.cur.fetchone()
+    
+    if not organisation:
+        raise HTTPException(status_code=404, detail="Could not find organisation")
+    
     db.cur.execute("""INSERT INTO posts (id, body)
                         VALUES           
                             (DEFAULT, %s) RETURNING id;
@@ -91,8 +97,8 @@ async def create_post(request: Request, organisation_id: int, body: Post):
     db.cur.execute(f"""INSERT INTO pou_bridge (id, pid, oid, uid)
                         VALUES
                             (DEFAULT, {post_id}, {organisation_id}, {user_id});
-    """)     
-                        
+    """)
+    
     db.conn.commit()
     
     

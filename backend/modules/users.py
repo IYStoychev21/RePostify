@@ -23,7 +23,6 @@ async def get_user_info(request: Request):
         user_info = db.cur.fetchone()
         
         if user_info is None:
-            print("\n\nhello\n\n")
             raise TypeError
         
         user_info["pfp"] = user_info["pfp"][0:-4] + "320-c"

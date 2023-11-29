@@ -19,11 +19,11 @@ def init_db():
             (DEFAULT, 'John Doe', 'johndoe@gmail.com'),
             (DEFAULT, 'Jane Doe', 'janedoe@gmail.com');
 
-        INSERT INTO organisations (id, name)
-        VALUES
-            (DEFAULT, 'Org1'),
-            (DEFAULT, 'Org2'),
-            (DEFAULT, 'Org3');    
+        --INSERT INTO organisations (id, name)
+        --VALUES
+        --    (DEFAULT, 'Org1'),
+        --    (DEFAULT, 'Org2'),
+        --    (DEFAULT, 'Org3');    
             
         CREATE TABLE IF NOT EXISTS posts (
             id SERIAL PRIMARY KEY,
@@ -55,12 +55,12 @@ def init_db():
             role VARCHAR(255) NOT NULL
         );                
         
-        INSERT INTO uo_bridge (id, uid, oid, role)
-        VALUES
-            (DEFAULT, 1, 1, 'Administrator'),
-            (DEFAULT, 1, 2, 'Administrator'),
-            (DEFAULT, 2, 2, 'Member'),
-            (DEFAULT, 2, 3, 'Member');
+        --INSERT INTO uo_bridge (id, uid, oid, role)
+        --VALUES
+        --    (DEFAULT, 1, 1, 'Administrator'),
+        --    (DEFAULT, 1, 2, 'Administrator'),
+        --    (DEFAULT, 2, 2, 'Member'),
+        --    (DEFAULT, 2, 3, 'Member');
     """)
 
     db.conn.commit()

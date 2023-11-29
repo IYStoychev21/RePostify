@@ -109,3 +109,21 @@ async def create_organisation(request: Request, body: CreateOrganisationBody):
         """)
     
     db.conn.commit()
+    
+@router.delete("/organisation/delete/{organisation_id}", tags=['Organisations'])
+async def delete_organisation(request: Request, organisation_id: int):
+    if not request.session.get("email"):
+        raise HTTPException(status_code=400, detail="Not logged in")
+    
+    db.cur.execute("""SELECT role FROM uo_bridge WHERE uid = (SELECT id FROM users WHERE lower(email) = lower(%s)) AND oid = %s""", (request.session.get("email"),organisation_id))
+    user_role:str = db.cur.fetchone()["role"] # type: ignore
+    
+    if user_role.lower() != "owner":
+        raise HTTPException(status_code=401, detail="Not authorised")
+    
+    db.cur.execute(f"""DELETE FROM pou_bridge WHERE oid = {organisation_id}""")
+    db.cur.execute(f"""DELETE FROM uo_bridge WHERE oid = {organisation_id}""")
+    db.cur.execute(f"""DELETE FROM organisations WHERE id = {organisation_id}""")
+    db.conn.commit()
+        
+    
