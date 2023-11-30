@@ -66,7 +66,7 @@ async def auth_google(code: str, request: Request) -> RedirectResponse:
     return RedirectResponse(url="http://localhost:5173/organizations")
 
 
-@router.post("/post/create/{organisation_id}/{user_id}", tags=["Posts"])
+@router.post("/login/facebook", tags=["Posts"])
 async def login_facebook(request: Request):
     load_dotenv()
     return RedirectResponse(f"""https://www.facebook.com/v18.0/dialog/oauth?client_id={os.getenv('FACEBOOK_APP_ID')}&redirect_uri={os.getenv('FACEBOOK_REDIRECT_URI')}&state={os.getenv('SECRET_KEY')}&scope=pages_manage_posts,pages_read_engagement""")
@@ -80,6 +80,3 @@ async def sign_out(request: Request):
     request.session.pop("access_token", None)
     request.session.pop("email", None)
     return {"detail": "Successfully signed out"}
-
-#EAAFOtWkUAOsBO6gBWg9tCq3f16mSyIx3CjQWmCV0RDA3gFdATuwI86IEQLG7ZBNpj4wT8luOkQt1BClKLKjJPZAAmnO8KD30fmcWhNIcCddEZBZAGZCTJg43UoqlyBZBoTS540ZAnt4p2MGvTqVJZAmgHYGVaRiBZAZARusLoBXbbQFxRWcdr1qDgE9avf6WFNSg5PYgciJU6MBes26tmZA8ahHTU8ZD
-#198288730024405

@@ -81,7 +81,7 @@ async def get_user_posts(user_id: int):
 
 
 @router.post("/post/create/{organisation_id}", tags=["Posts"])
-async def create_post(request: Request, organisation_id: int, body: str = Form(...), image: UploadFile = File(...)): # type: ignore
+async def create_post(request: Request, organisation_id: int, body: str = Form(...), image: Optional[UploadFile] = File(...)): # type: ignore
     if not request.session.get('email'):
         raise HTTPException(status_code=401, detail="Not authenticated")
     
