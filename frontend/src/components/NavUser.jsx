@@ -8,7 +8,7 @@ export default function NavUser(props) {
                 </div>
                 <div className="text-center">
                     <p className="text-2xl font-semibold">{props.name}</p>
-                    <p className="text-xl uppercase mt-4 border-white border-2 rounded-sm">{props.role}</p>
+                    <p className="text-xl uppercase mt-4 px-5 border-white border-2 rounded-sm">{props.role}</p>
                 </div>
             </div>
         </>

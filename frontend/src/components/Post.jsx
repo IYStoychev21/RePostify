@@ -14,6 +14,7 @@ export default function Post(props) {
 
     return (
         <>
+        <div>
             <div className="rounded-xl w-full p-5 bg-white">
                 <div className="flex items-center gap-2"> 
                     <img className="rounded-full hover:scale-105 cursor-pointer duration-150 active:scale-100 select-none bg-accent-500" src={props.user.pfp} height="32" width="32" alt="" />
@@ -25,6 +26,16 @@ export default function Post(props) {
                     <img src={image} className='max-w-md rounded-xl text-center'/>
                 </div>}
             </div>
+            {props.role == 'owner' && <div className="flex gap-5">
+                <button className="bg-[#3dc144] hover:bg-[#329037] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Approve</button>
+                <button className="bg-[#c64141] hover:bg-[#a33434] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Reject</button>
+            </div>}
+
+            {props.role == 'PR' && <div className="flex gap-5">
+                <button className="bg-[#3dc144] hover:bg-[#329037] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Approve</button>
+                <button className="bg-[#c64141] hover:bg-[#a33434] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Reject</button>
+            </div>}
+        </div>
         </>
     );
 }

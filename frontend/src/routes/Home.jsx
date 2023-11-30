@@ -7,14 +7,16 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import purpleCircle from '/background/purple-circle.png'
 import magentaCircle from '/background/magenta-circle.png'
+import useFetch from '../hooks/useFetch'
 
 export default function Home() {
     let [posts, setPosts] = useState([])
     let [queryParam] = useSearchParams()
     let navigate = useNavigate()
-    
+    let [role, setRole] = useState()
     let organizationId = null
     organizationId = queryParam.get("id")
+    let user = useFetch("http://localhost:8000/user")
 
     useEffect(() => {
         if(organizationId) {
@@ -23,6 +25,20 @@ export default function Home() {
             })
         }
     }, [])
+
+    useEffect(() => {
+        if(user && user.data) {
+            axios.get(`http://localhost:8000/user/organisations/${user.data.id}`, {withCredentials: true}).then((res) => {
+                if(res.data){
+                    res.data.map(org => {
+                        if(org.oid == organizationId) {
+                            setRole(org.role)
+                        }
+                    })
+                }
+            })
+        }
+    }, [user])
 
     if(organizationId == null) {
         navigate("/organizations")
@@ -45,7 +61,7 @@ export default function Home() {
                                     {
                                         posts.map((post, index) => {
                                             return (
-                                                <Post key={index} user={post.user} post={post.post} />
+                                                <Post key={index} role={role} user={post.user} post={post.post} />
                                             )
                                         })
                                     }
