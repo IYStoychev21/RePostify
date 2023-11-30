@@ -1,3 +1,4 @@
+from importlib.resources import Resource
 import os
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile, Form
 from typing import Optional
@@ -7,6 +8,8 @@ import requests
 from . import db
 import re
 from azure.storage.blob.aio import BlobServiceClient
+from azure.core.exceptions import ResourceExistsError
+import uuid
 
 blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=repostify;AccountKey=SMXj6x5aTMVgb5y3Qn9m97sg7fDQoGaodfplm7fGJVxyInSRzXNV2VknIa3hUuH9K/g6ZLDDMUam+AStjUbJYg==;EndpointSuffix=core.windows.net")
 
@@ -84,14 +87,33 @@ async def create_post(request: Request, organisation_id: int, body: str = Form(.
     
     if not organisation:
         raise HTTPException(status_code=404, detail="Could not find organisation")
-        
-    
+
     db.cur.execute("""INSERT INTO posts (id, body)
                         VALUES           
                             (DEFAULT, %s) RETURNING id;
     """, (body, ))
-    
     post_id = db.cur.fetchone()["id"] # type: ignore
+    
+    if image:
+        _, extension = image.filename.split(".") # type: ignore
+        
+        print(f"\n\n{image.filename}\n\n")
+        async with blob_service_client:
+            container_client = blob_service_client.get_container_client("images")
+            
+            try:
+                if not await container_client.exists():
+                    await container_client.create_container()
+                    
+                blob_client = container_client.get_blob_client(f"{uuid.uuid4()}.{extension}")
+                
+                await blob_client.upload_blob(await image.read(), blob_type="BlockBlob")
+                db.cur.execute(f"""UPDATE posts SET attachment = '{blob_client.url}' WHERE id = {post_id}""")
+            except:
+                raise HTTPException(status_code=500, detail="Could not upload image")
+                
+    
+    
     
     db.cur.execute(f"""SELECT * FROM users WHERE lower(email) = lower('{request.session.get('email')}')""")
     user_id = db.cur.fetchone()["id"] # type: ignore
