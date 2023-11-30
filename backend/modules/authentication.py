@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Request
 from fastapi import APIRouter, Depends
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 import requests
 from modules.get_token import get_current_token
 import modules.db as db
@@ -69,7 +69,12 @@ async def auth_google(code: str, request: Request) -> RedirectResponse:
 @router.get("/login/facebook", tags=["Authentication"])
 async def login_facebook():
     load_dotenv()
-    return RedirectResponse(f"""https://www.facebook.com/v18.0/dialog/oauth?client_id={os.getenv('FACEBOOK_APP_ID')}&redirect_uri={os.getenv('FACEBOOK_REDIRECT_URI')}&state={os.getenv('SECRET_KEY')}&scope=pages_manage_posts,pages_read_engagement""")
+
+    url = f"https://www.facebook.com/v18.0/dialog/oauth?client_id={os.getenv('FACEBOOK_APP_ID')}&redirect_uri={os.getenv('FACEBOOK_REDIRECT_URI')}&state={os.getenv('SECRET_KEY')}&scope=pages_manage_posts,pages_read_engagement"
+
+    return {
+        "url": url
+    }
 
 
 @router.delete("/signout", tags=["Authentication"])

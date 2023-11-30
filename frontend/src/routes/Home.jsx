@@ -22,7 +22,7 @@ export default function Home() {
         if(organizationId) {
             axios.get(`http://localhost:8000/organisation/posts/${organizationId}`, {withCredentials: true}).then((res) => {
                 setPosts(res.data.reverse())
-            })
+            }).catch((err) => {})
         }
     }, [])
 

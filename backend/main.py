@@ -14,7 +14,8 @@ app.add_middleware(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 origins = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "*"
 ]
 
 app.add_middleware(

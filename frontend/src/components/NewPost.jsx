@@ -43,18 +43,13 @@ export default function NewPost(props) {
     }
 
     const submitPost = () => {
-        const imageData = new FormData()
-        imageData.append('image', image)
+        const formData = new FormData()
+        formData.append('body', inputText)
+        formData.append('image', image)
 
-        let post = {
-            body: inputText,
-            image: imageData
-        }
-
-
-        if(post.body.length != 0)
+        if(inputText.length != 0)
         {
-            axios.post(`http://localhost:8000/post/create/${props.organizationId}`, post, {
+            axios.post(`http://localhost:8000/post/create/${props.organizationId}`, formData, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'multipart/form-data'
