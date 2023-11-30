@@ -142,5 +142,6 @@ async def auth_facebook(code: str, request: Request) -> RedirectResponse:
     
 @router.delete("/post/delete/{post_id}", tags=["Posts"])
 async def delete_post(post_id: int):
+    db.cur.execute(f"""DELETE FROM pou_bridge WHERE pid = {post_id}""")
     db.cur.execute(f"""DELETE FROM posts WHERE id = {post_id}""")
     db.conn.commit()
