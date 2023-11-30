@@ -43,14 +43,23 @@ export default function NewPost(props) {
     }
 
     const submitPost = () => {
+        const imageData = new FormData()
+        imageData.append('image', image)
+
         let post = {
             body: inputText,
-            image: image,
+            image: imageData
         }
+
 
         if(post.body.length != 0)
         {
-            axios.post(`http://localhost:8000/post/create/${props.organizationId}`, post, {withCredentials: true}).then(() => {
+            axios.post(`http://localhost:8000/post/create/${props.organizationId}`, post, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(() => {
                 window.location.reload()
             })
         }
