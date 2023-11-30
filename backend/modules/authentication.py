@@ -66,41 +66,10 @@ async def auth_google(code: str, request: Request) -> RedirectResponse:
     return RedirectResponse(url="http://localhost:5173/organizations")
 
 
-@router.get("/login/facebook", response_class=RedirectResponse, tags=["Authentication"])
+@router.post("/post/create/{organisation_id}/{user_id}", tags=["Posts"])
 async def login_facebook(request: Request):
     load_dotenv()
     return RedirectResponse(f"""https://www.facebook.com/v18.0/dialog/oauth?client_id={os.getenv('FACEBOOK_APP_ID')}&redirect_uri={os.getenv('FACEBOOK_REDIRECT_URI')}&state={os.getenv('SECRET_KEY')}&scope=pages_manage_posts,pages_read_engagement""")
-    
-    
-@router.get("/auth/facebook", response_class=RedirectResponse, tags=["Authentication"])
-async def auth_facebook(code: str, request: Request) -> RedirectResponse:
-    token_url = "https://graph.facebook.com/oauth/access_token"
-    print(f"app secret: {os.getenv("FACEBOOK_APP_SECRET")}")
-    params = {
-        "client_id": os.getenv("FACEBOOK_APP_ID"),
-        "redirect_uri": os.getenv("FACEBOOK_REDIRECT_URI"),
-        "client_secret": "0fcd5275692c7c4e2468f44489429db8",
-        "code": code
-    }
-    response = requests.get(token_url, params=params).json()
-    print(f"response: {response}")
-    access_token = response.get("access_token")
-    # print(f"code: {access_token}")  # Print the access token
-    # request.session["access_token"] = access_token
-    print(f"access_token: {access_token}")
-
-    pages_response = requests.get("https://graph.facebook.com/me/accounts", params={"access_token": access_token}).json()
-    page_access_token = pages_response['data'][0]['access_token']  # Get the access token for the first page
-    print(f"page_access_token: {page_access_token}")
-    
-    post_url = f"https://graph.facebook.com/{pages_response['data'][0]['id']}/feed"
-    post_params = {
-        "message": "Hello, world from python!",
-        "access_token": page_access_token
-    }
-    post_response = requests.post(post_url, data=post_params)
-
-    return RedirectResponse(url="http://localhost:5173/organizations")
 
 
 @router.delete("/signout", tags=["Authentication"])
