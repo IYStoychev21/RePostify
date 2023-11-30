@@ -12,10 +12,6 @@ from azure.storage.blob.aio import BlobServiceClient
 
 blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=repostify;AccountKey=SMXj6x5aTMVgb5y3Qn9m97sg7fDQoGaodfplm7fGJVxyInSRzXNV2VknIa3hUuH9K/g6ZLDDMUam+AStjUbJYg==;EndpointSuffix=core.windows.net")
 
-class Post(BaseModel):
-    body: str
-    image: Optional[UploadFile] = None
-
 router = APIRouter()
 
 @router.get("/posts/{post_id}", tags=["Posts"])
