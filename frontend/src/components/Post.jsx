@@ -27,13 +27,13 @@ export default function Post(props) {
                 </div>}
             </div>
             {props.role == 'owner' && <div className="flex gap-5">
-                <button className="bg-[#3dc144] hover:bg-[#329037] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Approve</button>
-                <button className="bg-[#c64141] hover:bg-[#a33434] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Reject</button>
+                <button className="bg-[#3dc144] hover:bg-[#329037] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Приеми</button>
+                <button className="bg-[#c64141] hover:bg-[#a33434] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Откажи</button>
             </div>}
 
             {props.role == 'PR' && <div className="flex gap-5">
-                <button className="bg-[#3dc144] hover:bg-[#329037] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Approve</button>
-                <button className="bg-[#c64141] hover:bg-[#a33434] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Reject</button>
+                <button className="bg-[#3dc144] hover:bg-[#329037] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Приеми</button>
+                <button className="bg-[#c64141] hover:bg-[#a33434] hover:scale-105 active:scale-100 duration-100 text-white rounded-xl px-4 py-2 mt-2">Откажи</button>
             </div>}
         </div>
         </>

@@ -3,7 +3,7 @@ export default function NewMember(props) {
     return (
         <>
             <div className="w-full flex gap-3">
-                <input onChange={props.getEmail} placeholder="Enter users email E.g. john@gmail.com" type="email" pattern=".+@gmail\.com" className="w-full p-2 rounded-md" required/>     
+                <input onChange={props.getEmail} placeholder="Имейл на потребителя н.п john@gmail.com" type="email" pattern=".+@gmail\.com" className="w-full p-2 rounded-md" required/>     
 
                 <select onChange={props.getRole} className="p-2 rounded-md" name="role" id="role">
                     <option value="user">User</option>

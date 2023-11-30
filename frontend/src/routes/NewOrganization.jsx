@@ -71,7 +71,7 @@ export default function NewOrganization() {
                 <div className="flex overflow-hidden flex-col h-screen justify-center items-center bg-background-gray relative">
                     <form className="z-10 flex flex-col w-3/5 rounded-xl py-16 px-32 gap-5 bg-[#ffffff20]" onSubmit={createOrganization} method="post">
 
-                        <input type="text" onChange={getNameOnChange} className="w-full p-2 rounded-md" placeholder="ORGANIZATION NAME" name="name" id="name" required/> 
+                        <input type="text" onChange={getNameOnChange} className="w-full p-2 rounded-md" placeholder="ИМЕ НА ОРГАНИЗАЦИЯ" name="name" id="name" required/> 
 
                         <div className="flex flex-col gap-4">
                             {
@@ -81,8 +81,8 @@ export default function NewOrganization() {
                             }
                         </div>
 
-                        <button onClick={addNewMember} className="rounded-md bg-gradient-to-r from-[#7700A0] to-[#E40045] p-2 hover:scale-105 hover:bg-accent-300 active:scale-100 duration-100"> Add New Member </button>
-                        <button type="submit" className="p-3 bg-gradient-to-r from-[#7700A0] to-[#E40045] duration-100 hover:scale-105 hover:bg-secondary-700 active:scale-100 rounded-md uppercase">create new organisation</button>
+                        <button onClick={addNewMember} className="rounded-md bg-gradient-to-r from-[#7700A0] to-[#E40045] p-2 hover:scale-105 hover:bg-accent-300 active:scale-100 duration-100"> Добави нов член </button>
+                        <button type="submit" className="p-3 bg-gradient-to-r from-[#7700A0] to-[#E40045] duration-100 hover:scale-105 hover:bg-secondary-700 active:scale-100 rounded-md uppercase">Създай нова организация</button>
 
                     </form>
 

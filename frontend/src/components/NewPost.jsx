@@ -82,7 +82,7 @@ export default function NewPost(props) {
     return (
         <>
             <div className="flex flex-col w-fit items-center gap-2 mb-12">
-                <textarea onChange={captureInput} value={inputText} className="rounded-lg text-black p-5 resize-none text-lg bg-secondary-200" placeholder="Enter Text" name="newpost" id="newpost" cols="50" rows="6"></textarea>
+                <textarea onChange={captureInput} value={inputText} className="rounded-lg text-black p-5 resize-none text-lg bg-secondary-200" placeholder="Въведи текст" name="newpost" id="newpost" cols="50" rows="6"></textarea>
 
                 <div className="flex relative w-full">
                     <div className="flex">
@@ -117,7 +117,7 @@ export default function NewPost(props) {
                         <img src={preview} className='max-w-md rounded-xl'/>
                     </div> }
 
-                <button onClick={submitPost} className="p-3 w-3/4 text-xl text-text-50 hover:scale-105 active:scale-100 duration-75 bg-gradient-to-r from-[#7700A0] to-[#E40045] rounded-xl uppercase" type="submit">push for review</button>
+                <button onClick={submitPost} className="p-3 w-3/4 text-xl text-text-50 hover:scale-105 active:scale-100 duration-75 bg-gradient-to-r from-[#7700A0] to-[#E40045] rounded-xl uppercase" type="submit">предай за ревю</button>
             </div>
         </>
     )

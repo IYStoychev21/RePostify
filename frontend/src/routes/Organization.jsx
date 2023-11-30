@@ -50,7 +50,7 @@ export default function Organization() {
             <>
                 <Nav organizationId={organizationId} />
 
-                <h1 className="relative z-10 text-white text-5xl font-bold text-center mt-24 mb-12">Members</h1>
+                <h1 className="relative z-10 text-white text-5xl font-bold text-center mt-24 mb-12">Членове</h1>
 
                 <div className="m-6 flex gap-6">
                     {
@@ -61,7 +61,7 @@ export default function Organization() {
 
                     {role == "owner" &&
                     <div onClick={() => {navigate(`/users/add?id=${organizationId}`)}} className="flex text-center relative z-10 flex-col items-center justify-center bg-[#ffffff20] p-5 w-[160px] h-[260px] rounded-xl cursor-pointer text-xl hover:scale-105 active:scale-100 duration-100 border-black border">
-                        <h1 className="text-white select-none">Add Member</h1>
+                        <h1 className="text-white select-none">Добави нов член</h1>
                     </div>}
                     
                     <img src={bgElement} className="absolute z-0 top-0 left-0 w-full" alt="" />

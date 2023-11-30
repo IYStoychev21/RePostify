@@ -55,7 +55,7 @@ export default function Home() {
                             </div>
 
                             <div className='w-[50%]'>
-                                <h1 className='text-2xl text-white py-10 my-5 uppercase font-bold'>push for review</h1>
+                                <h1 className='text-2xl text-white py-10 my-5 uppercase font-bold'>Чакащи за ревю</h1>
 
                                 <div className='flex justify-center flex-col gap-8 mb-10'>
                                     {
