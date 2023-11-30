@@ -45,7 +45,9 @@ export default function NewPost(props) {
     const submitPost = () => {
         const formData = new FormData()
         formData.append('body', inputText)
-        formData.append('image', image)
+        if (image) {
+            formData.append('image', image)
+        }
 
         if(inputText.length != 0)
         {

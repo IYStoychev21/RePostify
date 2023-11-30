@@ -1,8 +1,6 @@
-from calendar import c
 import os
-from click import File
-from fastapi import APIRouter, HTTPException, Request, UploadFile, Form
-from typing import List, Optional
+from fastapi import APIRouter, File, HTTPException, Request, UploadFile, Form
+from typing import Optional
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 import requests
@@ -77,7 +75,7 @@ async def get_user_posts(user_id: int):
 
 
 @router.post("/post/create/{organisation_id}", tags=["Posts"])
-async def create_post(request: Request, organisation_id: int, body: str = Form(...), image: Optional[UploadFile] = File(...)): # type: ignore
+async def create_post(request: Request, organisation_id: int, body: str = Form(...), image: UploadFile = File(None)):
     if not request.session.get('email'):
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -86,8 +84,7 @@ async def create_post(request: Request, organisation_id: int, body: str = Form(.
     
     if not organisation:
         raise HTTPException(status_code=404, detail="Could not find organisation")
-    
-    
+        
     
     db.cur.execute("""INSERT INTO posts (id, body)
                         VALUES           
@@ -105,9 +102,7 @@ async def create_post(request: Request, organisation_id: int, body: str = Form(.
     """)
     
     db.conn.commit()
-    
-    
-    
+
     
 @router.get("/post/publish/facebook", response_class=RedirectResponse, tags=["Posts"])
 async def auth_facebook(code: str, request: Request) -> RedirectResponse:
