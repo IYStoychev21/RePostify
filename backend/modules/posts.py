@@ -145,6 +145,9 @@ async def publish_facebook(code: str, request: Request) -> RedirectResponse:
     page_access_token = pages_response['data'][0]['access_token']  # Get the access token for the first page
     print(f"page_access_token: {page_access_token}")
     
+    if (request.session.get("post_id") is None):
+        raise HTTPException(status_code=404, detail="Could not find post")
+
     db.cur.execute(f"""SELECT * FROM posts WHERE id = {request.session.get('post_id')}""")
     post = db.cur.fetchone()
 
@@ -169,7 +172,12 @@ async def publish_facebook(code: str, request: Request) -> RedirectResponse:
         }
     post_response = requests.post(post_url, data=post_params)
 
-    return RedirectResponse(url="http://localhost:5173/organizations")
+    db.cur.execute(f"""DELETE FROM pou_bridge WHERE pid = {request.session.get('post_id')}""")
+    db.cur.execute(f"""DELETE FROM posts WHERE id = {request.session.get('post_id')}""")
+    request.session.pop("post_id", None)
+    db.conn.commit()
+
+    return RedirectResponse(url=f"http://localhost:5173/organizations")
     
     
 @router.delete("/post/delete/{post_id}", tags=["Posts"])
