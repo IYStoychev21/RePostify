@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function Post(props) {
     const accept = () => {
-        axios.get(`http://localhost:8000/login/facebook`, { withCredentials: true}).then((res) => {
+        axios.get(`http://localhost:8000/login/facebook/${props.post.id}`, { withCredentials: true}).then((res) => {
             window.location.href = res.data.url
         })
     }

@@ -126,9 +126,10 @@ async def create_post(request: Request, organisation_id: int, body: str = Form(.
 
     
 @router.get("/post/publish/facebook", response_class=RedirectResponse, tags=["Posts"])
-async def auth_facebook(code: str, request: Request) -> RedirectResponse:
+async def publish_facebook(code: str, request: Request) -> RedirectResponse:
     token_url = "https://graph.facebook.com/oauth/access_token"
     print(f"app secret: {os.getenv('FACEBOOK_APP_SECRET')}")
+    print(code)
     params = {
         "client_id": os.getenv("FACEBOOK_APP_ID"),
         "redirect_uri": os.getenv("FACEBOOK_REDIRECT_URI"),
@@ -138,19 +139,34 @@ async def auth_facebook(code: str, request: Request) -> RedirectResponse:
     response = requests.get(token_url, params=params).json()
     print(f"response: {response}")
     access_token = response.get("access_token")
-    # print(f"code: {access_token}")  # Print the access token
-    # request.session["access_token"] = access_token
     print(f"access_token: {access_token}") 
 
     pages_response = requests.get("https://graph.facebook.com/me/accounts", params={"access_token": access_token}).json()
     page_access_token = pages_response['data'][0]['access_token']  # Get the access token for the first page
     print(f"page_access_token: {page_access_token}")
     
-    post_url = f"https://graph.facebook.com/{pages_response['data'][0]['id']}/feed"
-    post_params = {
-        "message": "Hello, world from python!",
-        "access_token": page_access_token
-    }
+    db.cur.execute(f"""SELECT * FROM posts WHERE id = {request.session.get('post_id')}""")
+    post = db.cur.fetchone()
+
+    if (post is None):
+        raise HTTPException(status_code=404, detail="Could not find post")
+
+    post_url = ""
+    post_params = {}
+
+    if post["attachment"]:
+        post_url = f"https://graph.facebook.com/{pages_response['data'][0]['id']}/photos"
+        post_params = {
+            "message": post["body"],
+            "access_token": page_access_token,
+            "url": post["attachment"]
+        }
+    else:
+        post_url = f"https://graph.facebook.com/{pages_response['data'][0]['id']}/feed"
+        post_params = {
+            "message": post["body"],
+            "access_token": page_access_token
+        }
     post_response = requests.post(post_url, data=post_params)
 
     return RedirectResponse(url="http://localhost:5173/organizations")
