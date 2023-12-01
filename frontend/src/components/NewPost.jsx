@@ -22,6 +22,9 @@ export default function NewPost(props) {
     let [xIsUploaded, setXIsUploaded] = useState(false)
     let [facebookIsUploaded, setFacebookIsUploaded] = useState(false)
     let [instagramIsUploaded, setInstagramIsUploaded] = useState(false)
+    let [type, setType] = useState(null)
+
+    let video = null
 
     const uploadImage = (event) => {
         setImage(() => event.target.files[0]) 
@@ -33,6 +36,7 @@ export default function NewPost(props) {
         }
 
         image.readAsDataURL(event.target.files[0])
+        setType(event.target.files[0].type)
     }
 
     const captureInput = (event) => {
@@ -104,7 +108,7 @@ export default function NewPost(props) {
 
                 { preview && <div className='relative'>
                         <img onClick={removeImage} src={closeIcon} className='left-2 top-2 hover:scale-105 cursor-pointer duration-100 active:scale-100 absolute' alt="" />
-                        <img src={preview} className='max-w-md rounded-xl'/>
+                        {type && type.split('/')[0] == "image"? <img src={preview} className='max-w-md rounded-xl'/>: <video src={preview} className='max-w-md rounded-xl' controls></video>}
                     </div> }
 
                 <button onClick={submitPost} className="p-3 w-3/4 text-xl text-text-50 hover:scale-105 active:scale-100 duration-75 bg-gradient-to-r from-[#7700A0] to-[#E40045] rounded-xl uppercase" type="submit">предай за ревю</button>
