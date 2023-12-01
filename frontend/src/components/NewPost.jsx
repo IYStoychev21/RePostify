@@ -1,11 +1,8 @@
-import imageIcon from '/icon/image-icon.svg'
-import videoIcon from '/icon/play-icon.svg'
+import attachmentIcon from '/icon/attachment.svg'
+import attachmentCompleteIcon from '/icon/attachment-complete.svg'
 import facebookIcon from '/icon/facebook-icon.svg'
 import instagramIcon from '/icon/instagram-icon.svg'
 import twitterIcon from '/icon/x-icon.svg'
-
-import imageIconComplete from '/icon/image-complete.png'
-import videoIconComplete from '/icon/play-complete.png'
 import facebookIconComplete from '/icon/facebook-complete.png'
 import instagramIconComplete from '/icon/instagram-complete.png'
 import twitterIconComplete from '/icon/x-complete.png'
@@ -86,12 +83,8 @@ export default function NewPost(props) {
 
                         <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
                             <input type="file" onChange={uploadImage} className='hidden' ref={file => fileInput = file}/>
-                            <img onClick={() => fileInput.click()} src={image ? imageIconComplete : imageIcon} alt="" /> 
+                            <img onClick={() => fileInput.click()} src={image ? attachmentCompleteIcon : attachmentIcon} /> 
                         </div>
-
-                        {/* <div className='hover:scale-105 active:scale-100 duration-75 cursor-pointer'>
-                            <img src={videoIcon} alt="" />
-                        </div> */}
                     </div>
 
                     <div className="flex absolute right-2">
