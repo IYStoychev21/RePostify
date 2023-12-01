@@ -71,23 +71,27 @@ export default function Profile() {
                     <div className="w-1/3 h-screen">
                         <div className="flex p-8 items-center justify-center h-full flex-col">
                         <div className="flex justify-center items-center">
-                                <div className="text-white">
-                                    <div className="flex flex-col items-center">
-                                        <h1 className="text-4xl">Име</h1>
-                                        {user && <h1 className="text-xl">{user.name}</h1>}
+                            <div className="text-white">
+                                <div className="flex justify-center items-center gap-10"> 
+                                    <div className="flex flex-col">
+                                        <div className="flex flex-col items-center">
+                                            <h1 className="text-4xl">Име</h1>
+                                            {user && <h1 className="text-xl">{user.name}</h1>}
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <h1 className="text-4xl">Имейл</h1>
+                                            {user && <h1 className="text-xl">{user.email}</h1>}
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col items-center">
-                                        <h1 className="text-4xl">Имейл</h1>
-                                        {user && <h1 className="text-xl">{user.email}</h1>}
+                                    <div>
+                                        {user && <img src={user.pfp} className="rounded-full h-[100px] w-[100px]" />}
                                     </div>
                                 </div>
-                                <div>
-                                    {user && <img src={user.pfp} className="rounded-full h-[200px] w-[200px]" />}
+                                    <div className="text-white w-[80%] mt-14 flex flex-col gap-6">
+                                        <button onClick={signOut} className="uppercase w-full bg-[#ba3f3f] hover:bg-[#913636] hover:scale-105 rounded-md active:scale-100 duration-100 p-3">Излез</button>
+                                        <button onClick={deleteAccount} className="uppercase w-full bg-[#ba3f3f] hover:bg-[#913636] hover:scale-105 rounded-md active:scale-100 duration-100 p-3">Изтрий акаунт</button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="text-white w-[80%] mt-10 flex flex-col gap-4">
-                                <button onClick={signOut} className="uppercase w-full bg-[#ba3f3f] hover:bg-[#913636] hover:scale-105 rounded-md active:scale-100 duration-100 p-1">Излез</button>
-                                <button onClick={deleteAccount} className="uppercase w-full bg-[#ba3f3f] hover:bg-[#913636] hover:scale-105 rounded-md active:scale-100 duration-100 p-1">Изтрий акаунт</button>
                             </div>
                         </div>
                     </div>

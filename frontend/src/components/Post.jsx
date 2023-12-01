@@ -2,17 +2,6 @@ import axios from "axios";
 import { useState } from "react";
 
 export default function Post(props) {
-    let [image, setImage] = useState(null)
-
-    if(props.post.image != null)
-    {
-        const imageReader = new FileReader;
-        imageReader.onload = () => {
-            setImage(imageReader.result)
-        }
-        imageReader.readAsDataURL(props.post.image)
-    }
-
     const accept = () => {
         axios.get(`http://localhost:8000/login/facebook`, { withCredentials: true}).then((res) => {
             window.location.href = res.data.url
@@ -35,8 +24,8 @@ export default function Post(props) {
                 </div>
 
                 <p className="mt-2 text-black">{props.post.body}</p> 
-                {image != null && <div className="flex justify-center mt-4">
-                    <img src={image} className='max-w-md rounded-xl text-center'/>
+                {props.post.attachment && <div className="flex justify-center mt-4">
+                    <img src={props.post.attachment} className='max-w-md rounded-xl text-center'/>
                 </div>}
             </div>
             {props.role == 'owner' && <div className="flex gap-5">
