@@ -98,19 +98,18 @@ async def create_post(request: Request, organisation_id: int, body: str = Form(.
         _, extension = image.filename.split(".") # type: ignore
         
         print(f"\n\n{image.filename}\n\n")
-        async with blob_service_client:
-            container_client = blob_service_client.get_container_client("images")
-            
-            try:
-                if not await container_client.exists():
-                    await container_client.create_container()
-                    
-                blob_client = container_client.get_blob_client(f"{uuid.uuid4()}.{extension}")
+        container_client = blob_service_client.get_container_client("images")
+        
+        try:
+            if not await container_client.exists():
+                await container_client.create_container()
                 
-                await blob_client.upload_blob(await image.read(), blob_type="BlockBlob")
-                db.cur.execute(f"""UPDATE posts SET attachment = '{blob_client.url}' WHERE id = {post_id}""")
-            except:
-                raise HTTPException(status_code=500, detail="Could not upload image")
+            blob_client = container_client.get_blob_client(f"{uuid.uuid4()}.{extension}")
+            
+            await blob_client.upload_blob(await image.read(), blob_type="BlockBlob")
+            db.cur.execute(f"""UPDATE posts SET attachment = '{blob_client.url}' WHERE id = {post_id}""")
+        except:
+            raise HTTPException(status_code=500, detail="Could not upload image")
                 
     
     
@@ -129,7 +128,7 @@ async def create_post(request: Request, organisation_id: int, body: str = Form(.
 @router.get("/post/publish/facebook", response_class=RedirectResponse, tags=["Posts"])
 async def auth_facebook(code: str, request: Request) -> RedirectResponse:
     token_url = "https://graph.facebook.com/oauth/access_token"
-    print(f"app secret: {os.getenv("FACEBOOK_APP_SECRET")}")
+    print(f"app secret: {os.getenv('FACEBOOK_APP_SECRET')}")
     params = {
         "client_id": os.getenv("FACEBOOK_APP_ID"),
         "redirect_uri": os.getenv("FACEBOOK_REDIRECT_URI"),
@@ -141,7 +140,7 @@ async def auth_facebook(code: str, request: Request) -> RedirectResponse:
     access_token = response.get("access_token")
     # print(f"code: {access_token}")  # Print the access token
     # request.session["access_token"] = access_token
-    print(f"access_token: {access_token}")
+    print(f"access_token: {access_token}") 
 
     pages_response = requests.get("https://graph.facebook.com/me/accounts", params={"access_token": access_token}).json()
     page_access_token = pages_response['data'][0]['access_token']  # Get the access token for the first page
