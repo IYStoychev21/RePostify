@@ -49,7 +49,7 @@ export default function Profile() {
     }
     
     const confirmDelete = () => {
-        axios.delete("http://localhost:8000/user/delete", { withCredentials: true }).then(() => {
+        axios.delete("http://localhost:8000/user/delete", { withCredentials: true}).then(() => {
             navigation("/")
         })
     }

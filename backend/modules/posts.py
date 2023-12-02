@@ -177,7 +177,7 @@ async def publish_facebook(code: str, request: Request) -> RedirectResponse:
     request.session.pop("post_id", None)
     db.conn.commit()
 
-    return RedirectResponse(url=f"http://localhost:5173/organizations")
+    return RedirectResponse(url=f"https://localhost:5173/organizations")
     
     
 @router.delete("/post/delete/{post_id}", tags=["Posts"])

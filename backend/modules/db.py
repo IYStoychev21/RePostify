@@ -4,5 +4,5 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-conn = psycopg2.connect(host="postgres", port="5432", dbname="postgres", password=os.getenv("PASSWORD"), user="postgres")
+conn = psycopg2.connect(user="postgres", password=os.getenv("PASSWORD"), host="postgres", port=5432, database="postgres")
 cur = conn.cursor(cursor_factory=RealDictCursor)

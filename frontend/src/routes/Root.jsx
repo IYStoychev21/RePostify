@@ -4,8 +4,7 @@ import smoke from "/background/background-smoke-home.png"
 
 export default function Root() {
     const handleLogIn = () => {
-        axios.get('http://localhost:8000/login/google')
-        .then((res) => {
+        axios.get('http://localhost:8000/login/google').then((res) => {
            window.location.href = res.data.url
         })
     }
